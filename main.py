@@ -31,199 +31,44 @@ import scipy
 from scipy.signal import hamming
 from scipy.fftpack import fft
 
-#------------------------------------------------------------------------------------------
-# DEFINIZIONE PATH E DEFINIZIONE DIRECTORY PER CHROMAGRAMS
-#------------------------------------------------------------------------------------------
+# np.genfromtxt(path_csv+name_csv, delimiter=',')
+
+folder = '/content/drive/MyDrive/Colab Notebooks/Chord Detector/DataLab'
+
+chord_annotation_dic = [] # to append mutliple dataframe without concatenating them i have to insert them as element of a list
+song_list = []
 
 
-_SAMPLING_RATE = 44100
-path_files = '/Users/PilvioSol/Desktop/Beatles_wav/'
-path_chromagrams = "/Users/PilvioSol/Desktop/progetto/chromagrams/"
-try:
-    os.mkdir(path_chromagrams)
-except OSError:
-    print("Creation of the directory %s failed" % path_chromagrams)
-else:
-    print("Successfully created the directory %s " % path_chromagrams)
-data_dir = pathlib.Path(path_files)
+# simplify the chord notation
+def __simplify_chords(chords_df): # silence
+    chords_processed = chords_df['chord'].str.split(':maj')                         # remove major x chords return array of array
+                                                                                    # containing all the chords
+    chords_processed = [elem[0] for elem in chords_processed]                       # further process step above to return 1 array
+                                                                                    # take the first element in all the N arrays (chords
+                                                                                    # string) to make it a list of N elements
+    chords_processed = [elem.split('/')[0] for elem in chords_processed]            # remove inverted chords
+    chords_processed = [elem.split('aug')[0] for elem in chords_processed]          # remove augmented chords
+    chords_processed = [elem.split(':(')[0] for elem in chords_processed]           # remove added notes chords
+    chords_processed = [elem.split('(')[0] for elem in chords_processed]            # remove added notes chords 2
+    chords_processed = [elem.split(':sus')[0] for elem in chords_processed]         # remove sustained chords
+    chords_processed = [re.split(":?\d", elem)[0] for elem in chords_processed]     # remove added note
+    chords_processed = [elem.replace('dim', 'min') for elem in chords_processed]    # change diminute to minor
+    chords_processed = [elem.replace('hmin', 'min') for elem in chords_processed]   # change semi-diminute to minor
+    chords_processed = [re.split(":$", elem)[0] for elem in chords_processed]       # remove added notes chords
+    return chords_processed
 
 
+for elem in os.listdir(folder):
+  song_path = f'{folder}/{elem}'
+  song_list.append(elem)
+  chord_annotation = pd.read_csv(song_path, sep=' ', header=None)                                       # no header in the files and separated
+                                                                                                        # by a empty space
+  # set up the columns of the file
+  chord_annotation.columns = ['start','end','chord']
+  chord_annotation['chord'] = __simplify_chords(chord_annotation)
+  chord_annotation.loc[chord_annotation['chord'] == 'N', 'chord'] = chord_annotation['chord'].mode()[0] # replace silence by probable
+                                                                                                        # tonal end
+  chord_annotation_dic.append(chord_annotation)
 
-#------------------------------------------------------------------------------------------
-# FUNZIONI PER CALCOLARE LE CHROMAGRAM
-#------------------------------------------------------------------------------------------
-
-def stft_basic(x, w, H=8):
-    """Compute a basic version of the discrete short-time Fourier transform (STFT)
-
-    Args:
-        x: Signal to be transformed
-        w: Window function
-        H: Hopsize
-
-    Returns:
-        X: The discrete short-time Fourier transform
-    """
-    N = len(w)
-    L = len(x)
-    M = np.floor((L - N) / H).astype(int)
-    X = np.zeros((N, M + 1), dtype='complex')
-    for m in range(M + 1):
-        x_win = x[m * H:m * H + N] * w
-        X_win = np.fft.fft(x_win)
-        X[:, m] = X_win
-    K = (N + 1) // 2
-    X = X[:K, :]
-    return X
-
-
-def F_coef(k, Fs, N):
-    """Computes the center frequency/ies of a Fourier coefficient
-
-    Args:
-        k: Fourier coefficient index
-        Fs: Sampling rate
-        N: Window size of Fourier fransform
-
-    Returns:
-        im: Frequency value(s)
-    """
-    return k * Fs / N
-
-
-def F_pitch(p, pitch_ref=69, freq_ref=440):
-    """Computes the center frequency/ies of a MIDI pitch
-
-    Args:
-        p: MIDI pitch value(s)
-        pitch_ref: Reference pitch (default: 69)
-        freq_ref: Frequency of reference pitch (default: 440.0)
-
-    Returns:
-        im: Frequency value(s)
-    """
-    return 2 ** ((p - pitch_ref) / 12) * freq_ref
-
-
-def P(p, Fs, N, pitch_ref=69, freq_ref=440):
-    """Computes the set of frequency indices that are assigned to a given pitch
-
-    Args:
-        p: MIDI pitch value
-        Fs: Sampling rate
-        N: Window size of Fourier fransform
-        pitch_ref: Reference pitch (default: 69)
-        freq_ref:  Frequency of reference pitch (default: 440.0)
-
-    Returns:
-        im: Set of frequency indices
-    """
-    lower = F_pitch(p - 0.5, pitch_ref, freq_ref)
-    upper = F_pitch(p + 0.5, pitch_ref, freq_ref)
-    k = np.arange(N // 2 + 1)
-    k_freq = F_coef(k, Fs, N)
-    mask = np.logical_and(lower <= k_freq, k_freq < upper)
-    return k[mask]
-
-
-def compute_Y_LF(Y, Fs, N):
-    """Computes a log-frequency spectrogram
-
-    Args:
-        Y: Magnitude or power spectrogram
-        Fs: Sampling rate
-        N: Window size of Fourier fransform
-        pitch_ref: Reference pitch (default: 69)
-        freq_ref: Frequency of reference pitch (default: 440.0)
-
-    Returns:
-        Y_LF: Log-frequency spectrogram
-        F_coef_pitch: Pitch values
-    """
-    Y_LF = np.zeros((128, Y.shape[1]))
-    for p in range(128):
-        k = P(p, Fs, N)
-        Y_LF[p, :] = Y[k, :].sum(axis=0)
-    F_coef_pitch = np.arange(128)
-    return Y_LF, F_coef_pitch
-
-
-
-def compute_chromagram(Y_LF):
-    """Computes a chromagram
-
-    Args:
-        Y_LF: Log-frequency spectrogram
-
-    Returns:
-        C: Chromagram
-    """
-    C = np.zeros((12, Y_LF.shape[1]))
-    p = np.arange(128)
-    for c in range(12):
-        mask = (p % 12) == c
-        C[c, :] = Y_LF[mask, :].sum(axis=0)
-    return C
-
-
-
-
-
-
-
-#------------------------------------------------------------------------------------------
-# FUNZIONE PER ESTRARRE LE FEATURES (CHROMAGRAM)
-#------------------------------------------------------------------------------------------
-
-def extract_features(file_name):
-    try:
-        audio, sample_rate = librosa.load(file_name, mono=True)
-
-        #cqt = librosa.feature.chroma_cqt(y=Hmn, sr=sample_rate)
-        H = 1024
-        N = 2048
-        Fs = _SAMPLING_RATE
-        w = np.hanning(N)
-        X = stft_basic(audio, w, H)
-        Hmn, Prs = librosa.decompose.hpss(X)
-        eps = np.finfo(float).eps
-        Y = 20 * np.log10(eps + np.abs(Hmn) ** 2)
-        Y_LF, F_coef_pitch = compute_Y_LF(Y, Fs, N)
-        cqt = compute_chromagram(Y_LF)
-
-    except Exception as e:
-        print("Error encountered while parsing file: ", file_name)
-        return None
-
-    return cqt
-
-
-
-
-
-
-
-#------------------------------------------------------------------------------------------
-# FEATURE EXTRACTION PER TUTTI I FILE DEL DATASET
-#------------------------------------------------------------------------------------------
-
-files_in_basepath = pathlib.Path(path_files)
-songs_path = files_in_basepath.iterdir()
-for song in songs_path:
-    if (str(song).endswith('.wav') and song.is_file()):
-
-        print(song)
-        features = extract_features(song)
-        print(features)
-        name = song.name[0:-4] + '_CQT.png'
-        fig, ax = plt.subplots()
-        img = librosa.display.specshow(librosa.amplitude_to_db(features, ref=np.max),
-                                       sr=_SAMPLING_RATE, ax=ax)
-        ax.set_title(name)
-        fig.colorbar(img, ax=ax, format="%+2.0f dB")
-        fig.savefig(path_chromagrams + name)
-    else:
-        print('thats not a mp3 file')
-
-
-
+print(song_list[0])
+chord_annotation_dic[0]
