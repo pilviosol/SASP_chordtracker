@@ -12,18 +12,20 @@ plt.style.use('seaborn')
 
 
 _SAMPLING_RATE = 44100
-# path_files = "/Users/PilvioSol/Desktop/Beatles_wav/"
-# path_chromagrams = "/Users/PilvioSol/Desktop/progetto/chromagrams/"
-path_files = "E:/Uni/First year/Second Semester/Sound Analysis/Project Chord detection/Beatles_wav"
-path_chromagrams = "E:/Uni/First year/Second Semester/Sound Analysis/Project Chord detection/Chromagrams/"
-path_csv = "E:/Uni/First year/Second Semester/Sound Analysis/Project Chord detection/Beatles_csv/"
+path_files = "/Users/PilvioSol/Desktop/Beatles_wav/"
+# path_chromagrams = "/Users/PilvioSol/Desktop/progetto/codice/data/chromagrams/"
+path_csv = "/Users/PilvioSol/Desktop/progetto/codice/data/Beatles_csv/"
+# path_files = "E:/Uni/First year/Second Semester/Sound Analysis/Project Chord detection/Beatles_wav"
+# path_chromagrams = "E:/Uni/First year/Second Semester/Sound Analysis/Project Chord detection/Chromagrams/"
+#path_csv = "E:/Uni/First year/Second Semester/Sound Analysis/Project Chord detection/Beatles_csv/"
+'''
 try:
     os.mkdir(path_chromagrams)
 except OSError:
     print("Creation of the directory %s failed" % path_chromagrams)
 else:
     print("Successfully created the directory %s " % path_chromagrams)
-data_dir = pathlib.Path(path_files)
+data_dir = pathlib.Path(path_files)  '''
 
 
 
@@ -193,15 +195,17 @@ for song in songs_path:
         print(song)
         features = extract_features(song)
         print(features)
-        name_cqt = song.name[0:-4] + '_CQT.png'
+        # name_cqt = song.name[0:-4] + '_CQT.png'
         name_csv = song.name[0:-4] + '_CQT.csv'
+        '''
         fig, ax = plt.subplots()
         img = librosa.display.specshow(librosa.amplitude_to_db(features, ref=np.max),
                                        sr=_SAMPLING_RATE, ax=ax)
         ax.set_title(name_cqt)
         # fig.colorbar(img, ax=ax, format="%+2.0f dB")
+        
+        fig.savefig(path_chromagrams + name_cqt)  '''
         np.savetxt(path_csv + name_csv, features, delimiter=",")
-        fig.savefig(path_chromagrams + name_cqt)
     else:
         print('thats not a mp3 file')
 

@@ -59,7 +59,7 @@ def __simplify_chords(chords_df):  # silence
     chords_processed = [re.split(":$", elem)[0] for elem in chords_processed]  # remove added notes chords
     return chords_processed
 
-
+# Read lab files
 def readlab(path):
     dictionary = []
     list_name = []
@@ -80,6 +80,9 @@ def readlab(path):
     return dictionary, list_name
 
 
+
+
+# Probabilità di avere un accordo dopo l'altro
 def __calc_prob_chordpairs(chord_group):
     chord_group_count = chord_group.groupby('second_chord').size().reset_index()
     chord_group_count.columns = ['second_chord', 'count']
