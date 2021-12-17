@@ -2,36 +2,87 @@ import os
 import matplotlib.pyplot as plt
 
 import numpy as np
+import pandas as pd
 import librosa, librosa.display
 import pathlib
 plt.style.use('seaborn')
 
-#------------------------------------------------------------------------------------------
+import \
+    re  # regular expression, is a special sequence of characters that helps you match or find other strings or sets of strings
+
+
+# ------------------------------------------------------------------------------------------
+# READ LAB
+# ------------------------------------------------------------------------------------------
+path_data = 'data/'
+path_lab = 'data/Beatles_lab'
+
+
+# simplify the chord notation
+def __simplify_chords(chords_df):  # silence
+    chords_processed = chords_df['chord'].str.split(':maj')  # remove major x chords return array of array
+    # containing all the chords
+    chords_processed = [elem[0] for elem in chords_processed]  # further process step above to return 1 array
+    # take the first element in all the N arrays (chords
+    # string) to make it a list of N elements
+    chords_processed = [elem.split('/')[0] for elem in chords_processed]  # remove inverted chords
+    chords_processed = [elem.split('aug')[0] for elem in chords_processed]  # remove augmented chords
+    chords_processed = [elem.split(':(')[0] for elem in chords_processed]  # remove added notes chords
+    chords_processed = [elem.split('(')[0] for elem in chords_processed]  # remove added notes chords 2
+    chords_processed = [elem.split(':sus')[0] for elem in chords_processed]  # remove sustained chords
+    chords_processed = [re.split(":?\d", elem)[0] for elem in chords_processed]  # remove added note
+    chords_processed = [elem.replace('dim', 'min') for elem in chords_processed]  # change diminute to minor
+    chords_processed = [elem.replace('hmin', 'min') for elem in chords_processed]  # change semi-diminute to minor
+    chords_processed = [re.split(":$", elem)[0] for elem in chords_processed]  # remove added notes chords
+    return chords_processed
+
+
+# Read lab files
+def readlab(path):
+    dictionary = []
+    list_name = []
+
+    for elem in os.listdir(path):
+        song_path = f'{path}/{elem}'
+        list_name.append(elem)
+        chord_annotation = pd.read_csv(song_path, sep=' ', header=None)  # no header in the files and separated
+        # by an empty space
+        # set up the columns of the file
+        chord_annotation.columns = ['start', 'end', 'chord']
+        chord_annotation['chord'] = __simplify_chords(chord_annotation)
+        chord_annotation.loc[chord_annotation['chord'] == 'N', 'chord'] = chord_annotation['chord'].mode()[
+            0]  # replace silence by probable
+        # tonal end
+        dictionary.append(chord_annotation)
+
+    return dictionary, list_name
+
+
+chord_annotation_dic, song_list = readlab(path_lab)
+
+np.savetxt(path_data + 'chord_annotation_dic', chord_annotation_dic, delimiter=",")
+np.savetxt(path_data + 'song_list', song_list, delimiter=",")
+
+
+# ------------------------------------------------------------------------------------------
 # DEFINIZIONE PATH E DEFINIZIONE DIRECTORY PER CHROMAGRAMS
-#------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
 
 
 _SAMPLING_RATE = 44100
-path_files = "/Users/PilvioSol/Desktop/Beatles_wav/"
+
+# path_files = "/Users/PilvioSol/Desktop/Beatles_wav/"
 # path_chromagrams = "/Users/PilvioSol/Desktop/progetto/codice/data/chromagrams/"
-path_csv = "/Users/PilvioSol/Desktop/progetto/codice/data/Beatles_csv/"
-# path_files = "E:/Uni/First year/Second Semester/Sound Analysis/Project Chord detection/Beatles_wav"
+# path_csv = "/Users/PilvioSol/Desktop/progetto/codice/data/Beatles_csv/"
+
+path_files = "E:/Uni/First year/Second Semester/Sound Analysis/Project Chord detection/Beatles_wav"
 # path_chromagrams = "E:/Uni/First year/Second Semester/Sound Analysis/Project Chord detection/Chromagrams/"
-#path_csv = "E:/Uni/First year/Second Semester/Sound Analysis/Project Chord detection/Beatles_csv/"
-'''
-try:
-    os.mkdir(path_chromagrams)
-except OSError:
-    print("Creation of the directory %s failed" % path_chromagrams)
-else:
-    print("Successfully created the directory %s " % path_chromagrams)
-data_dir = pathlib.Path(path_files)  '''
+path_csv = "data/Beatles_csv"
 
 
-
-#------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
 # FUNZIONI PER CALCOLARE LE CHROMAGRAM
-#------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
 
 def stft_basic(x, w, H=8):
     """Compute a basic version of the discrete short-time Fourier transform (STFT)
@@ -146,14 +197,10 @@ def compute_chromagram(Y_LF):
     return C
 
 
-
-
-
-
-
-#------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
 # FUNZIONE PER ESTRARRE LE FEATURES (CHROMAGRAM)
-#------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+
 
 def extract_features(file_name):
     try:
@@ -183,21 +230,24 @@ def extract_features(file_name):
 
 
 
-#------------------------------------------------------------------------------------------
-# FEATURE EXTRACTION PER TUTTI I FILE DEL DATASET
-#------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
+# CQT.CSV EXTRACTION PER TUTTI I FILE DEL DATASET
+# ------------------------------------------------------------------------------------------
 
 files_in_basepath = pathlib.Path(path_files)
 songs_path = files_in_basepath.iterdir()
+
 for song in songs_path:
     if (str(song).endswith('.wav') and song.is_file()):
 
         print(song)
         features = extract_features(song)
         print(features)
-        # name_cqt = song.name[0:-4] + '_CQT.png'
         name_csv = song.name[0:-4] + '_CQT.csv'
+        np.savetxt(path_csv + name_csv, features, delimiter=",")
+
         '''
+        name_cqt = song.name[0:-4] + '_CQT.png'
         fig, ax = plt.subplots()
         img = librosa.display.specshow(librosa.amplitude_to_db(features, ref=np.max),
                                        sr=_SAMPLING_RATE, ax=ax)
@@ -205,9 +255,12 @@ for song in songs_path:
         # fig.colorbar(img, ax=ax, format="%+2.0f dB")
         
         fig.savefig(path_chromagrams + name_cqt)  '''
-        np.savetxt(path_csv + name_csv, features, delimiter=",")
+
     else:
         print('thats not a mp3 file')
 
 
+# ------------------------------------------------------------------------------------------
+# CQT NOTE APPEND ON CHROMA DATAFRAME
+# ------------------------------------------------------------------------------------------
 
