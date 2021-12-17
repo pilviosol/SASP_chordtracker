@@ -107,6 +107,10 @@ chord_annotation_dic, song_list = readlab(path_lab)
 
 tp_matrix = []
 
+
+
+
+
 for i,val in enumerate(chord_annotation_dic):
     first_chord = chord_annotation_dic[i]['chord'].values[:-1].tolist()
     second_chord = chord_annotation_dic[i]['chord'][1:].tolist()
