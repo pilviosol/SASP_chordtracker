@@ -14,8 +14,9 @@ import \
 # ------------------------------------------------------------------------------------------
 # READ LAB
 # ------------------------------------------------------------------------------------------
+'''
 path_data = 'data/'
-path_lab = 'data/Beatles_lab'
+path_lab = 'data/Beatles_lab/'
 
 
 # simplify the chord notation
@@ -60,9 +61,12 @@ def readlab(path):
 
 chord_annotation_dic, song_list = readlab(path_lab)
 
-np.savetxt(path_data + 'chord_annotation_dic', chord_annotation_dic, delimiter=",")
-np.savetxt(path_data + 'song_list', song_list, delimiter=",")
+chord_annotation_dic = pd.DataFrame(chord_annotation_dic)
+song_list = pd.DataFrame(song_list)
 
+chord_annotation_dic.to_csv(path_data + 'chord_annotation_dic', sep=",")
+song_list.to_csv(path_data + 'song_list', sep=",")
+'''
 
 # ------------------------------------------------------------------------------------------
 # DEFINIZIONE PATH E DEFINIZIONE DIRECTORY PER CHROMAGRAMS
@@ -254,13 +258,10 @@ for song in songs_path:
         ax.set_title(name_cqt)
         # fig.colorbar(img, ax=ax, format="%+2.0f dB")
         
-        fig.savefig(path_chromagrams + name_cqt)  '''
+        fig.savefig(path_chromagrams + name_cqt)  
+        '''
 
     else:
         print('thats not a mp3 file')
 
-
-# ------------------------------------------------------------------------------------------
-# CQT NOTE APPEND ON CHROMA DATAFRAME
-# ------------------------------------------------------------------------------------------
 
