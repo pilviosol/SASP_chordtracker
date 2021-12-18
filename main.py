@@ -95,7 +95,7 @@ def readcsv_chroma(path):
         song_path = f'{path}/{elem}'
         chroma_annotation = pd.read_csv(song_path, sep=',', header=None)
         chroma_annotation = pd.DataFrame.transpose(chroma_annotation)
-        chroma_annotation.columns = [notes]
+        chroma_annotation.columns = notes
         dictionary.append(chroma_annotation)
 
     return dictionary
@@ -108,22 +108,25 @@ chroma_dic = readcsv_chroma(path_csv)
 # assing chord to every chroma rows
 def chord_chroma_raws(chroma, chord_annotation):
     chroma['chord'] = '0'
-    for idx, value in enumerate(chroma):
-        print(idx)
-        raw = 0
-        if win_size_t*np.float(idx+1) < chord_annotation['end'][raw]:
-            chroma['chord'][idx] = chord_annotation['chord'][raw]
+    raw = 0
+    for ii in range(chroma.shape[0]):
+        print('i: ', ii)
+        if win_size_t*np.float(ii+1) < chord_annotation['end'][raw]:
+            chroma.loc[ii, 'chord'] = chord_annotation['chord'][raw]
+            print('if')
         else:
+            chroma.loc[ii, 'chord'] = chord_annotation['chord'][raw]
             raw += 1
+            print('else')
 
     return chroma
 
 
 chroma_dic_new = []
 
-for idx, value in enumerate(chord_annotation_dic):
+for idx in range(len(chord_annotation_dic)):
     print(idx)
-    chroma_dic_new[idx] = chord_chroma_raws(chroma_dic[idx], chord_annotation_dic[idx])
+    chroma_dic_new.append(chord_chroma_raws(chroma_dic[idx], chord_annotation_dic[idx]))
 
 
 # Probabilità di avere un accordo dopo l'altro
