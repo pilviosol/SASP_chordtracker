@@ -22,7 +22,7 @@ from scipy.spatial import distance_matrix
 from matplotlib import colors
 from itertools import product
 
-from hmmlearn import hmm
+#from hmmlearn import hmm
 from sklearn.metrics import f1_score
 import pathlib
 from pathlib import Path
@@ -69,6 +69,16 @@ def __simplify_chords(chords_df):  # silence
 
 # Read lab files
 def readlab(path):
+    '''
+
+    Args:
+        path: path where the .lab files are
+
+    Returns:
+        dictionary: a dictionary with all songs decomposed in start, end, chord
+        song_list: a list containing all song's name in the dataset
+
+    '''
     dictionary = []
     list_name = []
 
@@ -89,6 +99,16 @@ def readlab(path):
 
 
 def readcsv_chroma(path):
+    '''
+
+    Args:
+        path: path where the .csv files are
+
+    Returns:
+        dictionary: a dictionary with all songs, each one decomposed in equally spaced windows with all energies per
+        note for each window
+
+    '''
     dictionary = []
 
     for elem in os.listdir(path):
@@ -105,8 +125,20 @@ chord_annotation_dic, song_list = readlab(path_lab)
 chroma_dic = readcsv_chroma(path_csv)
 
 
-# assing chord to every chroma rows
+# passing chord to every chroma rows
 def chord_chroma_raws(chroma, chord_annotation):
+    '''
+
+    Args:
+        chroma: a dictionary with all songs, each one decomposed in equally spaced windows with all energies per
+        note for each window
+        chord_annotation: a dictionary with all songs decomposed in start, end, chord
+
+    Returns:
+        chroma: a dictionary with all songs, each one decomposed in equally spaced windows with all energies per
+        note for each window with a new column with the chord assigned from the dataset
+
+    '''
     chroma['chord'] = '0'
     raw = 0
     for ii in range(chroma.shape[0]):
@@ -131,6 +163,15 @@ for idx in range(len(chord_annotation_dic)):
 
 # Probabilità di avere un accordo dopo l'altro
 def __calc_prob_chordpairs(chord_group):
+    '''
+
+    Args:
+        chord_group: group of chords of a song
+
+    Returns:
+        chord_group_count: probability of having a chord after one other for all chords in a song
+
+    '''
     chord_group_count = chord_group.groupby('second_chord').size().reset_index()
     chord_group_count.columns = ['second_chord', 'count']
     total = chord_group_count['count'].sum()
@@ -141,6 +182,16 @@ def __calc_prob_chordpairs(chord_group):
 
 # transition calculate on the chord change not on tactus or windows -> need chromagram values
 def transition_prob_matrix(firstchord, secondchord):
+    '''
+
+    Args:
+        firstchord:
+        secondchord:
+
+    Returns:
+        prob_matrix: matrix with probabilities of passing from a chord to another
+
+    '''
     sequence_chords = pd.DataFrame({'first_chord': firstchord, 'second_chord': secondchord})
     prob_matrix = sequence_chords.groupby('first_chord').apply(__calc_prob_chordpairs).reset_index()
     prob_matrix = prob_matrix.drop('level_1', axis=1)
@@ -160,3 +211,4 @@ for i, val in enumerate(chord_annotation_dic):
     tp_matrix.append(transition_prob_matrix(first_chord, second_chord))
 
 print('ok')
+
