@@ -58,14 +58,6 @@ def readlab(path):
 
     return dictionary, list_name
 
-
-chord_annotation_dic, song_list = readlab(path_lab)
-
-chord_annotation_dic = pd.DataFrame(chord_annotation_dic)
-song_list = pd.DataFrame(song_list)
-
-chord_annotation_dic.to_csv(path_data + 'chord_annotation_dic', sep=",")
-song_list.to_csv(path_data + 'song_list', sep=",")
 '''
 
 # ------------------------------------------------------------------------------------------
@@ -79,9 +71,9 @@ _SAMPLING_RATE = 44100
 # path_chromagrams = "/Users/PilvioSol/Desktop/progetto/codice/data/chromagrams/"
 # path_csv = "/Users/PilvioSol/Desktop/progetto/codice/data/Beatles_csv/"
 
-path_files = "E:/Uni/First year/Second Semester/Sound Analysis/Project Chord detection/Beatles_wav"
+path_files = "D:/Uni/First year/Second Semester/Sound Analysis/Project Chord detection/Beatles_wav/"
 # path_chromagrams = "E:/Uni/First year/Second Semester/Sound Analysis/Project Chord detection/Chromagrams/"
-path_csv = "data/Beatles_csv"
+path_csv = "data/Beatles_csv/"
 
 
 # ------------------------------------------------------------------------------------------

@@ -43,7 +43,6 @@ path_csv = 'data/Beatles_csv/'
 
 notes = np.array(["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"])
 
-# chord_annotation_dic = pd.read_csv("data/chord_annotation_dic", sep=',', header=None)
 
 win_size_t = 2048/44100
 
