@@ -38,7 +38,7 @@ plt.style.use('seaborn')
 
 
 # Variables
-path_lab = 'data/Beatles_lab'
+path_lab = 'data/Beatles_lab/'
 path_csv = 'data/Beatles_csv/'
 
 notes = np.array(["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"])
@@ -81,7 +81,7 @@ def readlab(path):
     dictionary = []
     list_name = []
 
-    for elem in os.listdir(path):
+    for elem in sorted(os.listdir(path)):
         song_path = f'{path}/{elem}'
         list_name.append(elem)
         chord_annotation = pd.read_csv(song_path, sep=' ', header=None)  # no header in the files and separated
@@ -110,7 +110,7 @@ def readcsv_chroma(path):
     '''
     dictionary = []
 
-    for elem in os.listdir(path):
+    for elem in sorted(os.listdir(path)):
         song_path = f'{path}/{elem}'
         chroma_annotation = pd.read_csv(song_path, sep=',', header=None)
         chroma_annotation = pd.DataFrame.transpose(chroma_annotation)
@@ -142,6 +142,8 @@ def chord_chroma_raws(chroma, chord_annotation):
     raw = 0
     for ii in range(chroma.shape[0]):
         print('i: ', ii)
+        print('win_size_t*np.float(ii+1): ', win_size_t*np.float(ii+1))
+        print('chord_annotation[end][raw]: ', chord_annotation['end'][raw])
         if win_size_t*np.float(ii+1) < chord_annotation['end'][raw]:
             chroma.loc[ii, 'chord'] = chord_annotation['chord'][raw]
             print('if')
