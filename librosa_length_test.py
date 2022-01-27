@@ -1,7 +1,7 @@
 import librosa
 import pathlib
 
-path = "/Users/PilvioSol/Desktop/Beatles_wav/"
+path = "/Users/PilvioSol/Desktop/Beatles_new_new/"
 
 files_in_basepath = pathlib.Path(path)
 songs_path = files_in_basepath.iterdir()
