@@ -71,7 +71,7 @@ _SAMPLING_RATE = 44100
 # path_chromagrams = "/Users/PilvioSol/Desktop/progetto/codice/data/chromagrams/"
 # path_csv = "/Users/PilvioSol/Desktop/progetto/codice/data/Beatles_csv/"
 
-path_files = "D:/Uni/First year/Second Semester/Sound Analysis/Project Chord detection/Beatles_wav/"
+#path_files = "D:/Uni/First year/Second Semester/Sound Analysis/Project Chord detection/Beatles_wav/"
 # path_chromagrams = "E:/Uni/First year/Second Semester/Sound Analysis/Project Chord detection/Chromagrams/"
 path_csv = "data/Beatles_csv/"
 
