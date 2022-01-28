@@ -38,7 +38,7 @@ plt.style.use('seaborn')
 
 
 # Variables
-path_lab = 'data/Beatles_lab/'
+path_lab = 'data/Beatles_lab_tuned/'
 path_csv = 'data/Beatles_csv/'
 
 notes = np.array(["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"])
