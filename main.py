@@ -37,17 +37,20 @@ plt.style.use('seaborn')
 # np.genfromtxt(path_csv+name_csv, delimiter=',')
 
 
-# Variables
+# ------------------------------------------------------------------------------------------
+# VARIABLES
+# ------------------------------------------------------------------------------------------
 path_lab = 'data/Beatles_lab_tuned/'
 path_csv = 'data/Beatles_csv/'
-
 notes = np.array(["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"])
-
-
 win_size_t = 2048/44100
+chroma_dic_new = []
+tp_matrix = []
 
 
-# simplify the chord notation
+# ------------------------------------------------------------------------------------------
+# SIMPLIFY CHORD NOTATION
+# ------------------------------------------------------------------------------------------
 def __simplify_chords(chords_df):  # silence
     chords_processed = chords_df['chord'].str.split(':maj')  # remove major x chords return array of array
     # containing all the chords
@@ -63,10 +66,13 @@ def __simplify_chords(chords_df):  # silence
     chords_processed = [elem.replace('dim', 'min') for elem in chords_processed]  # change diminute to minor
     chords_processed = [elem.replace('hmin', 'min') for elem in chords_processed]  # change semi-diminute to minor
     chords_processed = [re.split(":$", elem)[0] for elem in chords_processed]  # remove added notes chords
+
     return chords_processed
 
 
-# Read lab files
+# ------------------------------------------------------------------------------------------
+# READ .LAB FILES
+# ------------------------------------------------------------------------------------------
 def readlab(path):
     '''
 
@@ -96,7 +102,9 @@ def readlab(path):
 
     return dictionary, list_name
 
-
+# ------------------------------------------------------------------------------------------
+# CREATE DICTIONARY WITH ALL CHROMAS
+# ------------------------------------------------------------------------------------------
 def readcsv_chroma(path):
     '''
 
@@ -120,11 +128,16 @@ def readcsv_chroma(path):
     return dictionary
 
 
+# ------------------------------------------------------------------------------------------
+# CALLING FUNCTIONS READLAB AND READCSV_CHROMA
+# ------------------------------------------------------------------------------------------
 chord_annotation_dic, song_list = readlab(path_lab)
 chroma_dic = readcsv_chroma(path_csv)
 
 
-# passing chord to every chroma rows
+# ------------------------------------------------------------------------------------------
+# PASSING CHORD TO EVERY CHROMA ROWS
+# ------------------------------------------------------------------------------------------
 def chord_chroma_raws(chroma, chord_annotation):
     '''
 
@@ -155,14 +168,17 @@ def chord_chroma_raws(chroma, chord_annotation):
     return chroma
 
 
-chroma_dic_new = []
-
+# ------------------------------------------------------------------------------------------
+# CALLING FUNCTION CHORD_CHROMA_RAWS
+# ------------------------------------------------------------------------------------------
 for idx in range(len(chord_annotation_dic)):
     print(idx)
     chroma_dic_new.append(chord_chroma_raws(chroma_dic[idx], chord_annotation_dic[idx]))
 
 
-# Probabilità di avere un accordo dopo l'altro
+# ------------------------------------------------------------------------------------------
+# PROBABILITY OF HAVING ONE CHORD AFTER THE OTHER BASED ON .LAB FILES
+# ------------------------------------------------------------------------------------------
 def __calc_prob_chordpairs(chord_group):
     '''
 
@@ -181,7 +197,9 @@ def __calc_prob_chordpairs(chord_group):
     return chord_group_count
 
 
-# transition calculate on the chord change not on tactus or windows -> need chromagram values
+# ------------------------------------------------------------------------------------------
+# TRANSITION CALCULATED ON CHORD CHANGE FROM .LAB FILE
+# ------------------------------------------------------------------------------------------
 def transition_prob_matrix(firstchord, secondchord):
     '''
 
@@ -200,10 +218,6 @@ def transition_prob_matrix(firstchord, secondchord):
     prob_matrix = prob_matrix.fillna(0)
 
     return prob_matrix
-
-
-# initialize the tp_matrix list
-tp_matrix = []
 
 
 for i, val in enumerate(chord_annotation_dic):
