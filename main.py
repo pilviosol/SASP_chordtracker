@@ -132,7 +132,10 @@ def readcsv_chroma(path):
 # CALLING FUNCTIONS READLAB AND READCSV_CHROMA
 # ------------------------------------------------------------------------------------------
 chord_annotation_dic, song_list = readlab(path_lab)
+
+
 chroma_dic = readcsv_chroma(path_csv)
+
 
 
 # ------------------------------------------------------------------------------------------
@@ -154,16 +157,16 @@ def chord_chroma_raws(chroma, chord_annotation):
     chroma['chord'] = '0'
     raw = 0
     for ii in range(chroma.shape[0]):
-        print('i: ', ii)
-        print('win_size_t*np.float(ii+1): ', win_size_t*np.float(ii+1))
-        print('chord_annotation[end][raw]: ', chord_annotation['end'][raw])
+        #print('i: ', ii)
+        #print('win_size_t*np.float(ii+1): ', win_size_t*np.float(ii+1))
+        #print('chord_annotation[end][raw]: ', chord_annotation['end'][raw])
         if win_size_t*np.float(ii+1) < chord_annotation['end'][raw]:
             chroma.loc[ii, 'chord'] = chord_annotation['chord'][raw]
-            print('if')
+            #print('if')
         else:
             chroma.loc[ii, 'chord'] = chord_annotation['chord'][raw]
             raw += 1
-            print('else')
+            #print('else')
 
     return chroma
 
@@ -175,6 +178,60 @@ for idx in range(len(chord_annotation_dic)):
     print(idx)
     chroma_dic_new.append(chord_chroma_raws(chroma_dic[idx], chord_annotation_dic[idx]))
 
+print("len(chroma_dic_new): ", len(chroma_dic_new))
+#np.savetxt("data/chroma_dic_new", chroma_dic_new, delimiter=",")
+print('ciao')
+
+'''
+for index, row in chroma_dic_new[0].iterrows():
+    print(row)
+    
+'''
+
+all_chords = []
+for songs in chroma_dic_new:
+    for elements in songs['chord']:
+        if elements not in all_chords:
+            all_chords.append(elements)
+
+print(all_chords)
+
+
+G = []
+for chord in all_chords:
+    for songs in chroma_dic_new:
+        for index, row in songs.iterrows():
+            if row['chord'] == 'G':
+                G.append(row)
+
+
+
+
+
+
+
+print('ciao')
+
+
+
+
+
+'''
+def __get_mu_array(note_feature_vector):
+    return note_feature_vector[notes].mean()
+
+def get_mu_sigma_from_chroma(chromagram):
+    
+    mu_array = chromagram.groupby('chord').apply(__get_mu_array)
+
+    states_cov_matrices = []
+    for name, group in chromagram.groupby('chord'): # alphabetic order
+        states_cov_matrices.append(group[notes].cov().values)
+    states_cov_matrices = np.array(states_cov_matrices)
+
+    return [mu_array, states_cov_matrices]
+
+mu_array, states_cov_matrices = get_mu_sigma_from_chroma(chroma_dic_new) '''
 
 # ------------------------------------------------------------------------------------------
 # PROBABILITY OF HAVING ONE CHORD AFTER THE OTHER BASED ON .LAB FILES
