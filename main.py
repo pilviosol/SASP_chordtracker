@@ -8,6 +8,8 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 import numpy as np
 import pandas as pd
+import csv
+import json
 import IPython
 import IPython.display as ipd
 import librosa
@@ -208,17 +210,13 @@ for chord in all_chords:
             if (index['chord'] == chord):
                 chords_dictionary[chord].append(index)
 
-for songs in chroma_dic_new:
-    for index, row in songs.iterrows():
-        if row['chord'] == 'G':
-            '''print('ollarre')'''
+with open('data/chords_dictionary.csv', 'w') as csvfile:
+    for key in chords_dictionary.keys():
+        csvfile.write("%s, %s\n" % (key, chords_dictionary[key]))
 
-
-
-
-
-
-
+with open("data/chords_dictionary.json", "w") as outfile:
+    chords_dictionary_json = chords_dictionary.to_json()
+    json.dump(chords_dictionary, outfile)
 print('ciao')
 
 
