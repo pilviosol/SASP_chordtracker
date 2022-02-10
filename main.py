@@ -196,13 +196,22 @@ for songs in chroma_dic_new:
 
 print(all_chords)
 
+chords_dictionary = {}
+for chords in all_chords:
+    name = str(chords)
+    chords_dictionary[name] = []
 
-G = []
 for chord in all_chords:
-    for songs in chroma_dic_new:
-        for index, row in songs.iterrows():
-            if row['chord'] == 'G':
-                G.append(row)
+    print('processing chord: ', chord)
+    for song in chroma_dic_new:
+        for row, index in song.iterrows():
+            if (index['chord'] == chord):
+                chords_dictionary[chord].append(index)
+
+for songs in chroma_dic_new:
+    for index, row in songs.iterrows():
+        if row['chord'] == 'G':
+            '''print('ollarre')'''
 
 
 
