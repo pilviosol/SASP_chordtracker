@@ -10,6 +10,7 @@ import numpy as np
 import pandas as pd
 import csv
 import json
+import pickle
 import IPython
 import IPython.display as ipd
 import librosa
@@ -214,9 +215,12 @@ with open('data/chords_dictionary.csv', 'w') as csvfile:
     for key in chords_dictionary.keys():
         csvfile.write("%s, %s\n" % (key, chords_dictionary[key]))
 
+a_file = open("data/chords_dictionary.pkl", "wb")
+pickle.dump(chords_dictionary, a_file)
+a_file.close()
+
 with open("data/chords_dictionary.json", "w") as outfile:
-    chords_dictionary_json = chords_dictionary.to_json()
-    json.dump(chords_dictionary, outfile)
+    json.dumps(chords_dictionary, outfile)
 print('ciao')
 
 
