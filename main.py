@@ -134,11 +134,12 @@ def readcsv_chroma(path):
 # ------------------------------------------------------------------------------------------
 # CALLING FUNCTIONS READLAB AND READCSV_CHROMA
 # ------------------------------------------------------------------------------------------
+
+# dictionary with the same form of the lab
 chord_annotation_dic, song_list = readlab(path_lab)
 
-
+# create a chroma dic with chromas of all songs
 chroma_dic = readcsv_chroma(path_csv)
-
 
 
 # ------------------------------------------------------------------------------------------
@@ -177,18 +178,18 @@ def chord_chroma_raws(chroma, chord_annotation):
 # ------------------------------------------------------------------------------------------
 # CALLING FUNCTION CHORD_CHROMA_RAWS
 # ------------------------------------------------------------------------------------------
+
+# add as last raw the name of the chord in that specific window
 for idx in range(len(chord_annotation_dic)):
     print(idx)
     chroma_dic_new.append(chord_chroma_raws(chroma_dic[idx], chord_annotation_dic[idx]))
 
 print("len(chroma_dic_new): ", len(chroma_dic_new))
 #np.savetxt("data/chroma_dic_new", chroma_dic_new, delimiter=",")
-print('ciao')
 
 '''
 for index, row in chroma_dic_new[0].iterrows():
-    print(row)
-    
+    print(row) 
 '''
 
 all_chords = []
@@ -211,20 +212,17 @@ for chord in all_chords:
             if (index['chord'] == chord):
                 chords_dictionary[chord].append(index)
 
-with open('data/chords_dictionary.csv', 'w') as csvfile:
-    for key in chords_dictionary.keys():
-        csvfile.write("%s, %s\n" % (key, chords_dictionary[key]))
-
-a_file = open("data/chords_dictionary.pkl", "wb")
-pickle.dump(chords_dictionary, a_file)
-a_file.close()
-
-with open("data/chords_dictionary.json", "w") as outfile:
-    json.dumps(chords_dictionary, outfile)
-print('ciao')
-
-
-
+# with open('data/chords_dictionary.csv', 'w') as csvfile:
+#     for key in chords_dictionary.keys():
+#         csvfile.write("%s, %s\n" % (key, chords_dictionary[key]))
+#
+# a_file = open("data/chords_dictionary.pkl", "wb")
+# pickle.dump(chords_dictionary, a_file)
+# a_file.close()
+#
+# with open("data/chords_dictionary.json", "w") as outfile:
+#     json.dumps(chords_dictionary, outfile)
+# print('ciao')
 
 
 '''
@@ -243,6 +241,7 @@ def get_mu_sigma_from_chroma(chromagram):
     return [mu_array, states_cov_matrices]
 
 mu_array, states_cov_matrices = get_mu_sigma_from_chroma(chroma_dic_new) '''
+
 
 # ------------------------------------------------------------------------------------------
 # PROBABILITY OF HAVING ONE CHORD AFTER THE OTHER BASED ON .LAB FILES
