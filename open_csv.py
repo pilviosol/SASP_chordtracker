@@ -1,4 +1,7 @@
-import pandas as pd
+import csv
 
-dict_from_csv = pd.read_csv('data/chords_dictionary.csv', on_bad_lines='skip', sep=',',header=26).to_dict()
-print('ollare')
+with open('data/chords_dictionary.csv', mode='r') as inp:
+    reader = csv.reader(inp)
+    dict_from_csv = {rows[0] for rows in reader}
+
+print('cazzi')

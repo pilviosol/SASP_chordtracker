@@ -98,8 +98,8 @@ def readlab(path):
                                                                          # set up the columns of the file
         chord_annotation.columns = ['start', 'end', 'chord']
         chord_annotation['chord'] = __simplify_chords(chord_annotation)
-        chord_annotation.loc[chord_annotation['chord'] == 'N', 'chord'] = chord_annotation['chord'].mode()[
-            0]  # replace silence by probable
+        chord_annotation.loc[chord_annotation['chord'] == 'N', 'chord'] = chord_annotation['chord'].mode()[0]
+                # replace silence by probable
                 # tonal end
         dictionary.append(chord_annotation)
 
@@ -184,16 +184,29 @@ for idx in range(len(chord_annotation_dic)):
     print(idx)
     chroma_dic_new.append(chord_chroma_raws(chroma_dic[idx], chord_annotation_dic[idx]))
 
-print("len(chroma_dic_new): ", len(chroma_dic_new))
-#np.savetxt("data/chroma_dic_new", chroma_dic_new, delimiter=",")
+'''
+# save the new chroma dictionary as n csv files as it is a list of dataframe
+for i in np.arange(0,len(chroma_dic_new)):
+    chroma_dic_new[i].to_csv('data/chroma_dic_new_csvs/chroma_dic_new_ele'+ str(i), index=False)
+'''
+
+# ------------------------------------------------------------------------------------------
+# CREATE THE DICTIONARY WITH ALL THE CHROMA REGROUPED BY CHORDS
+# ------------------------------------------------------------------------------------------
 
 '''
-for index, row in chroma_dic_new[0].iterrows():
-    print(row) 
+# import the new chroma dictionary csv list
+chroma_dic_path = 'data/chroma_dic_new_csvs/'
+chroma_dic_new_list = []
+for elem in sorted(os.listdir(chroma_dic_path)):
+    temp_path = f'{chroma_dic_path}/{elem}'
+    temp_df= pd.read_csv(temp_path)
+    chroma_dic_new_list.append(temp_df)
+
 '''
 
 all_chords = []
-for songs in chroma_dic_new:
+for songs in chroma_dic_new_list:
     for elements in songs['chord']:
         if elements not in all_chords:
             all_chords.append(elements)
@@ -207,23 +220,25 @@ for chords in all_chords:
 
 for chord in all_chords:
     print('processing chord: ', chord)
-    for song in chroma_dic_new:
+    for song in chroma_dic_new_list:
         for row, index in song.iterrows():
             if (index['chord'] == chord):
                 chords_dictionary[chord].append(index)
 
-# with open('data/chords_dictionary.csv', 'w') as csvfile:
-#     for key in chords_dictionary.keys():
-#         csvfile.write("%s, %s\n" % (key, chords_dictionary[key]))
-#
-# a_file = open("data/chords_dictionary.pkl", "wb")
-# pickle.dump(chords_dictionary, a_file)
-# a_file.close()
-#
-# with open("data/chords_dictionary.json", "w") as outfile:
-#     json.dumps(chords_dictionary, outfile)
-# print('ciao')
 
+for chord in all_chords:
+    temp_frames = []
+
+    for i in np.arange(0, len(chords_dictionary[chord])):
+        temp_frames.append(chords_dictionary[chord][i])
+        frames = pd.concat(temp_frames, axis = 1)
+
+    frames.to_csv('data/chords_dictionary_chroma_csvs/chords_dictionary_chroma_' + str(chord))
+
+
+# ------------------------------------------------------------------------------------------
+# CALCULATE MU AND SIGMA
+# ------------------------------------------------------------------------------------------
 
 '''
 def __get_mu_array(note_feature_vector):
