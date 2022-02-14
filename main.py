@@ -184,17 +184,17 @@ for idx in range(len(chord_annotation_dic)):
     print(idx)
     chroma_dic_new.append(chord_chroma_raws(chroma_dic[idx], chord_annotation_dic[idx]))
 
-'''
+
 # save the new chroma dictionary as n csv files as it is a list of dataframe
 for i in np.arange(0,len(chroma_dic_new)):
     chroma_dic_new[i].to_csv('data/chroma_dic_new_csvs/chroma_dic_new_ele'+ str(i), index=False)
-'''
+
 
 # ------------------------------------------------------------------------------------------
 # CREATE THE DICTIONARY WITH ALL THE CHROMA REGROUPED BY CHORDS
 # ------------------------------------------------------------------------------------------
 
-'''
+
 # import the new chroma dictionary csv list
 chroma_dic_path = 'data/chroma_dic_new_csvs/'
 chroma_dic_new_list = []
@@ -203,7 +203,7 @@ for elem in sorted(os.listdir(chroma_dic_path)):
     temp_df= pd.read_csv(temp_path)
     chroma_dic_new_list.append(temp_df)
 
-'''
+
 
 all_chords = []
 for songs in chroma_dic_new_list:
@@ -225,6 +225,16 @@ for chord in all_chords:
             if (index['chord'] == chord):
                 chords_dictionary[chord].append(index)
 
+'''
+for chord in all_chords:
+    temp_frames = []
+    print('processing chord2: ', chord)
+    for i in np.arange(0, len(chords_dictionary[chord])):
+        temp_frames.append(chords_dictionary[chord][i])
+    frames = pd.concat(temp_frames)
+
+    frames.to_csv('/Users/PilvioSol/Desktop/progetto/codice/data/chromagrams/chords_dictionary_chroma_' + str(chord))
+
 
 for chord in all_chords:
     temp_frames = []
@@ -234,8 +244,18 @@ for chord in all_chords:
         frames = pd.concat(temp_frames, axis = 1)
 
     frames.to_csv('data/chords_dictionary_chroma_csvs/chords_dictionary_chroma_' + str(chord))
+'''
 
 
+for chord in all_chords:
+    list_frames = []
+    print('processing chord2: ', chord)
+    for i in np.arange(0, len(chords_dictionary[chord])):
+        list_frames.append(chords_dictionary[chord][i])
+    pandas_frame = pd.DataFrame(list_frames, columns =["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"])
+    pandas_frame.to_csv('/Users/PilvioSol/Desktop/progetto/codice/data/chromagrams/chords_dictionary_chroma_' + str(chord))
+
+temp_df= pd.read_csv('/Users/PilvioSol/Desktop/progetto/codice/data/chromagrams/chords_dictionary_chroma_D#:min')
 # ------------------------------------------------------------------------------------------
 # CALCULATE MU AND SIGMA
 # ------------------------------------------------------------------------------------------
