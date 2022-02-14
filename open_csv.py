@@ -1,7 +1,5 @@
 import csv
+import pandas as pd
 
-with open('data/chords_dictionary.csv', mode='r') as inp:
-    reader = csv.reader(inp)
-    dict_from_csv = {rows[0] for rows in reader}
-
+temp_df= pd.read_csv('/Users/PilvioSol/Desktop/progetto/codice/data/chromagrams/chords_dictionary_chroma_B')
 print('cazzi')
