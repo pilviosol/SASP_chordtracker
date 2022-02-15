@@ -23,7 +23,7 @@ path_files = "/Users/PilvioSol/Desktop/Beatles_new_wav/"
 # path_chromagrams = "/Users/PilvioSol/Desktop/progetto/codice/data/chromagrams/"
 # path_files = "D:/Uni/First year/Second Semester/Sound Analysis/Project Chord detection/Beatles_wav/"
 # path_chromagrams = "E:/Uni/First year/Second Semester/Sound Analysis/Project Chord detection/Chromagrams/"
-path_csv = "data/Beatles_csv/"
+path_csv = "data/Beatles_CQT_csv/"
 
 
 # ------------------------------------------------------------------------------------------
