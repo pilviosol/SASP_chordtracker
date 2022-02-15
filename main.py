@@ -225,27 +225,6 @@ for chord in all_chords:
             if (index['chord'] == chord):
                 chords_dictionary[chord].append(index)
 
-'''
-for chord in all_chords:
-    temp_frames = []
-    print('processing chord2: ', chord)
-    for i in np.arange(0, len(chords_dictionary[chord])):
-        temp_frames.append(chords_dictionary[chord][i])
-    frames = pd.concat(temp_frames)
-
-    frames.to_csv('/Users/PilvioSol/Desktop/progetto/codice/data/chromagrams/chords_dictionary_chroma_' + str(chord))
-
-
-for chord in all_chords:
-    temp_frames = []
-
-    for i in np.arange(0, len(chords_dictionary[chord])):
-        temp_frames.append(chords_dictionary[chord][i])
-        frames = pd.concat(temp_frames, axis = 1)
-
-    frames.to_csv('data/chords_dictionary_chroma_csvs/chords_dictionary_chroma_' + str(chord))
-'''
-
 
 for chord in all_chords:
     list_frames = []
@@ -253,29 +232,43 @@ for chord in all_chords:
     for i in np.arange(0, len(chords_dictionary[chord])):
         list_frames.append(chords_dictionary[chord][i])
     pandas_frame = pd.DataFrame(list_frames, columns =["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"])
-    pandas_frame.to_csv('/Users/PilvioSol/Desktop/progetto/codice/data/chromagrams/chords_dictionary_chroma_' + str(chord))
+    pandas_frame.to_csv('data/chromagrams/chords_dictionary_chroma_' + str(chord))
 
-temp_df= pd.read_csv('/data/chromagrams/chords_dictionary_chroma_D#_min')
+temp_df = pd.read_csv('data/chromagrams/chords_dictionary_chroma_D#_min')
+
+
 # ------------------------------------------------------------------------------------------
 # CALCULATE MU AND SIGMA
 # ------------------------------------------------------------------------------------------
 
-'''
 def __get_mu_array(note_feature_vector):
     return note_feature_vector[notes].mean()
 
+
 def get_mu_sigma_from_chroma(chromagram):
-    
-    mu_array = chromagram.groupby('chord').apply(__get_mu_array)
+    mu = chromagram.apply(__get_mu_array)
 
-    states_cov_matrices = []
-    for name, group in chromagram.groupby('chord'): # alphabetic order
-        states_cov_matrices.append(group[notes].cov().values)
-    states_cov_matrices = np.array(states_cov_matrices)
+    states_cov = chromagram.cov().values
+    states_cov = np.array(states_cov)
 
-    return [mu_array, states_cov_matrices]
+    return [mu, states_cov]
 
-mu_array, states_cov_matrices = get_mu_sigma_from_chroma(chroma_dic_new) '''
+
+# import the csvs and calculate the mean
+mu_dic = [all_chords]
+cov_dic = [all_chords]
+
+for elem in sorted(os.listidir('data/chromagrams/')):
+    temp_path = f'{chroma_dic_path}/{elem}'
+    temp_df = pd.read_csv(temp_path)
+    temp_df = temp_df.iloc[:, 1:]
+    mu_array, states_cov_matrices = get_mu_sigma_from_chroma(temp_df)
+    i = 0
+    mu_dic[all_chords[i]].append(mu_array)
+    cov_dic[all_chords[i]].append(states_cov_matrices)
+    i += 1
+
+
 
 
 # ------------------------------------------------------------------------------------------
