@@ -25,7 +25,8 @@ def __simplify_chords(chords_df):  # silence
     chords_processed = [re.split(":?\d", elem)[0] for elem in chords_processed]  # remove added note
     chords_processed = [elem.replace('dim', 'min') for elem in chords_processed]  # change diminute to minor
     chords_processed = [elem.replace('hmin', 'min') for elem in chords_processed]  # change semi-diminute to minor
-    chords_processed = [re.split(":$", elem)[0] for elem in chords_processed]  # remove added notes chords
+    chords_processed = [re.split(":$", elem)[0] for elem in chords_processed]
+    chords_processed = [elem.replace(':', '_') for elem in chords_processed]
 
     return chords_processed
 

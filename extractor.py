@@ -100,15 +100,4 @@ for chord in all_chords:
 
 
 
-# ------------------------------------------------------------------------------------------
-# TRANSITION CALCULATED ON CHORD CHANGE FROM .LAB FILE
-# ------------------------------------------------------------------------------------------
-tp_matrix = []
-
-for i, val in enumerate(chord_annotation_dic):
-    first_chord = chord_annotation_dic[i]['chord'].values[:-1].tolist()
-    second_chord = chord_annotation_dic[i]['chord'][1:].tolist()
-    tp_matrix.append(transition_prob_matrix(first_chord, second_chord))
-
-print('ok')
 
