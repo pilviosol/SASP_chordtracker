@@ -57,8 +57,7 @@ def readlab(path):
         chord_annotation.columns = ['start', 'end', 'chord']
         chord_annotation['chord'] = __simplify_chords(chord_annotation)
         chord_annotation.loc[chord_annotation['chord'] == 'N', 'chord'] = chord_annotation['chord'].mode()[0]
-                # replace silence by probable
-                # tonal end
+        # replace silence by probable tonal end
         dictionary.append(chord_annotation)
 
     return dictionary, list_name

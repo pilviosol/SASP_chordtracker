@@ -9,12 +9,17 @@ from extractor_functions import readlab, readcsv_chroma, chord_chroma_raws, get_
 
 
 notes = np.array(["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"])
-all_chords = ['G', 'B:min', 'E:min', 'C', 'A:min', 'F', 'D', 'F#', 'C#', 'E', 'B', 'A', 'F#:min', 'C:min', 'F:min', 'Eb', 'G:min', 'Bb', 'Ab', 'D:min', 'C#:min', 'Db', 'Bb:min', 'Eb:min', 'Gb:min', 'Gb', 'G#:min', 'G#', 'D#:min']
+all_chords = ['G', 'B_min', 'E_min', 'C', 'A_min', 'F', 'D', 'F#', 'C#', 'E', 'B', 'A', 'F#_min', 'C_min', 'F_min', 'Eb', 'G_min', 'Bb', 'Ab', 'D_min', 'C#_min', 'Db', 'Bb_min', 'Eb_min', 'Gb_min', 'Gb', 'G#_min', 'G#', 'D#_min']
 # import the csvs and calculate the mean
 mu_dic = dict.fromkeys(all_chords)
 cov_dic = dict.fromkeys(all_chords)
 chromagrams_path = 'data/chromagrams'
 i = int(0)
+
+
+# ------------------------------------------------------------------------------------------
+# CALCULATE MU AND SIGMA
+# ------------------------------------------------------------------------------------------
 
 for elem in sorted(os.listdir('data/chromagrams/')):
     temp_path = f'{chromagrams_path}/{elem}'
@@ -26,18 +31,14 @@ for elem in sorted(os.listdir('data/chromagrams/')):
     i += 1
 
 
-
-
 # ------------------------------------------------------------------------------------------
 # TRANSITION CALCULATED ON CHORD CHANGE FROM .LAB FILE
 # ------------------------------------------------------------------------------------------
 tp_matrix = []
 
-
 chord_annotation_long_dic = []
 for i, val in enumerate(chord_annotation_dic):
     chord_annotation_long_dic.append(chord_annotation_dic[i])
-
 
 
 for i, val in enumerate(chord_annotation_dic):
@@ -47,6 +48,7 @@ for i, val in enumerate(chord_annotation_dic):
 
 print('ok')
 
+
 # ------------------------------------------------------------------------------------------
 # INITIAL STATE MATRIX
 # ------------------------------------------------------------------------------------------
@@ -54,8 +56,6 @@ print('ok')
 in_matrix = []
 for i in range(29):
     in_matrix.append(1/29)
-
-
 
 
 def build_gaussian_hmm(initial_state_prob, transition_matrix, mu_array, states_cov_matrices):
