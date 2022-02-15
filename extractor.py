@@ -60,7 +60,7 @@ for elem in sorted(os.listdir(chroma_dic_path)):
     temp_df= pd.read_csv(temp_path)
     chroma_dic_new_list.append(temp_df)
 
-
+'''
 all_chords = []
 for songs in chroma_dic_new_list:
     for elements in songs['chord']:
@@ -87,3 +87,4 @@ for chord in all_chords:
         list_frames.append(chords_dictionary[chord][i])
     pandas_frame = pd.DataFrame(list_frames, columns =["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"])
     pandas_frame.to_csv('data/chromagrams/chords_dictionary_chroma_' + str(chord))
+'''
