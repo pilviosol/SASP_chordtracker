@@ -255,7 +255,7 @@ for chord in all_chords:
     pandas_frame = pd.DataFrame(list_frames, columns =["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"])
     pandas_frame.to_csv('/Users/PilvioSol/Desktop/progetto/codice/data/chromagrams/chords_dictionary_chroma_' + str(chord))
 
-temp_df= pd.read_csv('/Users/PilvioSol/Desktop/progetto/codice/data/chromagrams/chords_dictionary_chroma_D#:min')
+temp_df= pd.read_csv('/data/chromagrams/chords_dictionary_chroma_D#_min')
 # ------------------------------------------------------------------------------------------
 # CALCULATE MU AND SIGMA
 # ------------------------------------------------------------------------------------------
