@@ -2,7 +2,7 @@ import os  # provides functions for interacting with the operating system
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-
+from os import listdir
 from extractor_functions import readlab, readcsv_chroma, chord_chroma_raws, get_mu_sigma_from_chroma, \
     transition_prob_matrix
 # from hmmlearn import hmm
@@ -55,7 +55,7 @@ for i in np.arange(0, len(chroma_dic_new)):
 
 
 # import the new chroma dictionary csv list
-chroma_dic_path = 'data/chroma_dic_new_csvs/'
+chroma_dic_path = 'data/chroma_dic_new_csvs'
 chroma_dic_new_list = []
 for elem in sorted(os.listdir(chroma_dic_path)):
     temp_path = f'{chroma_dic_path}/{elem}'
@@ -97,19 +97,7 @@ for chord in all_chords:
 # CALCULATE MU AND SIGMA
 # ------------------------------------------------------------------------------------------
 
-# import the csvs and calculate the mean
-mu_dic = [all_chords]
-cov_dic = [all_chords]
 
-for elem in sorted(os.listidir('data/chromagrams/')):
-    temp_path = f'{chroma_dic_path}/{elem}'
-    temp_df = pd.read_csv(temp_path)
-    temp_df = temp_df.iloc[:, 1:]
-    mu_array, states_cov_matrices = get_mu_sigma_from_chroma(temp_df, notes)
-    i = 0
-    mu_dic[all_chords[i]].append(mu_array)
-    cov_dic[all_chords[i]].append(states_cov_matrices)
-    i += 1
 
 
 # ------------------------------------------------------------------------------------------
