@@ -47,5 +47,5 @@ for idx in range(len(chord_annotation_dic)):
 for i in np.arange(0, len(chroma_dic_new)):
     chroma_dic_new[i].to_csv('data/chroma_dic_new_csvs/chroma_dic_new_ele'+ str(i), index=False)
 
-calculate_chromagrams_csvs_by_chord('data/chroma_dic_new_csvs')
+#calculate_chromagrams_csvs_by_chord('data/chroma_dic_new_csvs')
 
