@@ -34,7 +34,7 @@ X, chroma_clara = extract_features('/Users/PilvioSol/Desktop/00_A_Day_In_The_Lif
 
 
 fig, ax = plt.subplots(nrows=2, sharex=True)
-img = librosa.display.specshow(chroma_clara,
+img = librosa.display.specshow(librosa.amplitude_to_db(chroma_clara, ref=np.max),
                                y_axis='chroma', x_axis='time', ax=ax[0])
 ax[0].label_outer()
 img = librosa.display.specshow(chroma, y_axis='chroma', x_axis='time', ax=ax[1])
@@ -48,6 +48,9 @@ ax[0].label_outer()
 img = librosa.display.specshow(librosa.amplitude_to_db(X, ref=np.max), y_axis='log', x_axis='time', ax=ax[1])
 plt.show()
 
-
-
-
+'''
+fig, ax = plt.subplots()
+        img = librosa.display.specshow(librosa.amplitude_to_db(chroma_clara, ref=np.max),
+                                       sr=_SAMPLING_RATE, ax=ax)
+        ax.set_title(name_cqt)
+'''

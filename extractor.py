@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 from os import listdir
 from extractor_functions import readlab, readcsv_chroma, chord_chroma_raws, get_mu_sigma_from_chroma, \
-    transition_prob_matrix
+    transition_prob_matrix, calculate_chromagrams_csvs_by_chord
 
 plt.style.use('seaborn')
 
@@ -47,5 +47,5 @@ for idx in range(len(chord_annotation_dic)):
 for i in np.arange(0, len(chroma_dic_new)):
     chroma_dic_new[i].to_csv('data/chroma_dic_new_csvs/chroma_dic_new_ele'+ str(i), index=False)
 
-
+calculate_chromagrams_csvs_by_chord('data/chroma_dic_new_csvs')
 
