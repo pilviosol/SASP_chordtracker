@@ -48,43 +48,4 @@ for i in np.arange(0, len(chroma_dic_new)):
     chroma_dic_new[i].to_csv('data/chroma_dic_new_csvs/chroma_dic_new_ele'+ str(i), index=False)
 
 
-# ------------------------------------------------------------------------------------------
-# CREATE THE DICTIONARY WITH ALL THE CHROMA REGROUPED BY CHORDS
-# ------------------------------------------------------------------------------------------
 
-# import the new chroma dictionary csv list
-chroma_dic_path = 'data/chroma_dic_new_csvs'
-chroma_dic_new_list = []
-for elem in sorted(os.listdir(chroma_dic_path)):
-    temp_path = f'{chroma_dic_path}/{elem}'
-    temp_df= pd.read_csv(temp_path)
-    chroma_dic_new_list.append(temp_df)
-
-'''
-all_chords = []
-for songs in chroma_dic_new_list:
-    for elements in songs['chord']:
-        if elements not in all_chords:
-            all_chords.append(elements)
-print(all_chords)
-
-chords_dictionary = {}
-for chords in all_chords:
-    name = str(chords)
-    chords_dictionary[name] = []
-
-for chord in all_chords:
-    print('processing chord: ', chord)
-    for song in chroma_dic_new_list:
-        for row, index in song.iterrows():
-            if index['chord'] == chord:
-                chords_dictionary[chord].append(index)
-
-for chord in all_chords:
-    list_frames = []
-    print('processing chord2: ', chord)
-    for i in np.arange(0, len(chords_dictionary[chord])):
-        list_frames.append(chords_dictionary[chord][i])
-    pandas_frame = pd.DataFrame(list_frames, columns =["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"])
-    pandas_frame.to_csv('data/chromagrams/chords_dictionary_chroma_' + str(chord))
-'''

@@ -7,10 +7,12 @@ from hmmlearn import hmm
 from extractor_functions import readlab, readcsv_chroma, chord_chroma_raws, get_mu_sigma_from_chroma, \
     transition_prob_matrix
 
-
+# ------------------------------------------------------------------------------------------
+# VARIABLES
+# ------------------------------------------------------------------------------------------
+print('variables')
 notes = np.array(["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"])
 all_chords = ['G', 'B_min', 'E_min', 'C', 'A_min', 'F', 'D', 'F#', 'C#', 'E', 'B', 'A', 'F#_min', 'C_min', 'F_min', 'Eb', 'G_min', 'Bb', 'Ab', 'D_min', 'C#_min', 'Db', 'Bb_min', 'Eb_min', 'Gb_min', 'Gb', 'G#_min', 'G#', 'D#_min']
-# import the csvs and calculate the mean
 mu_dic = dict.fromkeys(all_chords)
 cov_dic = dict.fromkeys(all_chords)
 chromagrams_path = 'data/chromagrams'
@@ -20,7 +22,7 @@ i = int(0)
 # ------------------------------------------------------------------------------------------
 # CALCULATE MU AND SIGMA
 # ------------------------------------------------------------------------------------------
-
+print('calculate mu and sigma')
 for elem in sorted(os.listdir('data/chromagrams/')):
     temp_path = f'{chromagrams_path}/{elem}'
     temp_df = pd.read_csv(temp_path)
@@ -34,6 +36,7 @@ for elem in sorted(os.listdir('data/chromagrams/')):
 # ------------------------------------------------------------------------------------------
 # TRANSITION CALCULATED ON CHORD CHANGE FROM .LAB FILE
 # ------------------------------------------------------------------------------------------
+print('TRANSITION CALCULATED ON CHORD CHANGE FROM .LAB FILE')
 tp_matrix = []
 
 chord_annotation_long_dic = []
@@ -52,7 +55,7 @@ print('ok')
 # ------------------------------------------------------------------------------------------
 # INITIAL STATE MATRIX
 # ------------------------------------------------------------------------------------------
-
+print('INITIAL STATE MATRIX')
 in_matrix = []
 for i in range(29):
     in_matrix.append(1/29)

@@ -186,3 +186,53 @@ def transition_prob_matrix(firstchord, secondchord):
     prob_matrix = prob_matrix.fillna(0)
 
     return prob_matrix
+
+
+# ------------------------------------------------------------------------------------------
+# CREATE THE DICTIONARY WITH ALL THE CHROMA REGROUPED BY CHORDS
+# ------------------------------------------------------------------------------------------
+def calculate_chromagrams_csvs_by_chord(path):
+    '''
+
+    Args:
+        chroma_dic_path: path where saved all song's csvs of chromagrams with column 'chord' appended
+
+    Returns: all csvs of chromagrams divided by chord in the folder "data/chromagrams"
+
+    '''
+
+    # import the new chroma dictionary csv list
+    chroma_dic_path = path  # 'data/chroma_dic_new_csvs'
+    chroma_dic_new_list = []
+    for elem in sorted(os.listdir(chroma_dic_path)):
+        temp_path = f'{chroma_dic_path}/{elem}'
+        temp_df = pd.read_csv(temp_path)
+        chroma_dic_new_list.append(temp_df)
+
+    all_chords = []
+    for songs in chroma_dic_new_list:
+        for elements in songs['chord']:
+            if elements not in all_chords:
+                all_chords.append(elements)
+    print(all_chords)
+
+    chords_dictionary = {}
+    for chords in all_chords:
+        name = str(chords)
+        chords_dictionary[name] = []
+
+    for chord in all_chords:
+        print('processing chord: ', chord)
+        for song in chroma_dic_new_list:
+            for row, index in song.iterrows():
+                if index['chord'] == chord:
+                    chords_dictionary[chord].append(index)
+
+    for chord in all_chords:
+        list_frames = []
+        print('processing chord2: ', chord)
+        for i in np.arange(0, len(chords_dictionary[chord])):
+            list_frames.append(chords_dictionary[chord][i])
+        pandas_frame = pd.DataFrame(list_frames,
+                                    columns=["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"])
+        pandas_frame.to_csv('data/chromagrams/chords_dictionary_chroma_' + str(chord))
