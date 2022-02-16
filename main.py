@@ -26,11 +26,14 @@ i = int(0)
 # ------------------------------------------------------------------------------------------
 print('calculate mu and sigma')
 for elem in sorted(os.listdir('data/chromagrams/')):
+    mu_values = []
     temp_path = f'{chromagrams_path}/{elem}'
     temp_df = pd.read_csv(temp_path)
     temp_df = temp_df.iloc[:, 1:]
     mu_array, states_cov_matrices = get_mu_sigma_from_chroma(temp_df, notes)
-    mu_matrix.append(mu_array)
+    for i in np.arange(0, len(mu_array)):
+        mu_values.append(mu_array[i])
+    mu_matrix.append(mu_values)
     cov_matrix.append(states_cov_matrices)
     # mu_dic[all_chords[i]] = mu_array
     # cov_dic[all_chords[i]] = states_cov_matrices
@@ -70,8 +73,8 @@ for k in np.arange(0, len(tp_matrix)):
 test = pd.DataFrame(np.matrix(test.iloc[:, :]), index=all_chords, columns=all_chords)
 test_count = pd.DataFrame(np.matrix(test_count.iloc[:,:]), index=all_chords, columns=all_chords)
 res_tp = test.div(test_count)
-
-
+res_tp = res_tp.fillna(0)
+res_tp = res_tp.div(res_tp.sum(axis=1), axis=0)
 # ------------------------------------------------------------------------------------------
 # INITIAL STATE MATRIX
 # ------------------------------------------------------------------------------------------
@@ -105,5 +108,6 @@ h_markov_model = build_gaussian_hmm(in_matrix, res_tp, mu_matrix, cov_matrix)
 
 print('fottiti')
 
-for i in np.arange(0, 1):
-    print(i)
+chord_ix_predictions = h_markov_model.predict(chroma_dic_new[6])
+print('HMM output predictions:')
+print(chord_ix_predictions[:50])
