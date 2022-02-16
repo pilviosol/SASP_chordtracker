@@ -19,7 +19,7 @@ import \
 
 _SAMPLING_RATE = 44100
 
-path_files = "/Users/PilvioSol/Desktop/Beatles_new_wav/"
+path_files = "/Users/PilvioSol/Desktop/progetto/Beatles_new_new/"
 # path_chromagrams = "/Users/PilvioSol/Desktop/progetto/codice/data/chromagrams/"
 # path_files = "D:/Uni/First year/Second Semester/Sound Analysis/Project Chord detection/Beatles_wav/"
 # path_chromagrams = "E:/Uni/First year/Second Semester/Sound Analysis/Project Chord detection/Chromagrams/"
@@ -30,7 +30,7 @@ path_csv = "data/Beatles_CQT_csv/"
 # FUNZIONI PER CALCOLARE LE CHROMAGRAM
 # ------------------------------------------------------------------------------------------
 
-def stft_basic(x, w, H=8):
+def stft_basic(x, w, H=1024):
     """Compute a basic version of the discrete short-time Fourier transform (STFT)
 
     Args:
@@ -159,8 +159,8 @@ def extract_features(file_name):
         w = np.hanning(N)
         X = stft_basic(audio, w, H)
         Hmn, Prs = librosa.decompose.hpss(X)
-        eps = np.finfo(float).eps
-        Y = 20 * np.log10(eps + np.abs(Hmn) ** 2)
+        # eps = np.finfo(float).eps
+        Y = np.abs(Hmn)
         Y_LF, F_coef_pitch = compute_Y_LF(Y, Fs, N)
         cqt = compute_chromagram(Y_LF)
 
@@ -183,7 +183,7 @@ def extract_features(file_name):
 files_in_basepath = pathlib.Path(path_files)
 songs_path = files_in_basepath.iterdir()
 
-for song in songs_path:
+for song in sorted(songs_path):
     if (str(song).endswith('.wav') and song.is_file()):
 
         print(song)
@@ -192,7 +192,7 @@ for song in songs_path:
         name_csv = song.name[0:-4] + '_CQT.csv'
         np.savetxt(path_csv + name_csv, features, delimiter=",")
 
-        '''
+
         name_cqt = song.name[0:-4] + '_CQT.png'
         fig, ax = plt.subplots()
         img = librosa.display.specshow(librosa.amplitude_to_db(features, ref=np.max),
@@ -200,8 +200,8 @@ for song in songs_path:
         ax.set_title(name_cqt)
         # fig.colorbar(img, ax=ax, format="%+2.0f dB")
         
-        fig.savefig(path_chromagrams + name_cqt)  
-        '''
+        fig.savefig(path_csv + name_cqt)
+
 
     else:
         print('thats not a mp3 file')
