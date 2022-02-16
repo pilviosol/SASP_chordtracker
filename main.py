@@ -6,6 +6,7 @@ import pandas as pd
 from hmmlearn import hmm
 from extractor_functions import readlab, readcsv_chroma, chord_chroma_raws, get_mu_sigma_from_chroma, \
     transition_prob_matrix
+from utils import column_index
 
 # ------------------------------------------------------------------------------------------
 # VARIABLES
@@ -36,7 +37,7 @@ for elem in sorted(os.listdir('data/chromagrams/')):
 # ------------------------------------------------------------------------------------------
 # TRANSITION CALCULATED ON CHORD CHANGE FROM .LAB FILE
 # ------------------------------------------------------------------------------------------
-print('TRANSITION CALCULATED ON CHORD CHANGE FROM .LAB FILE')
+print('transition calculated on chord change from .lab file')
 tp_matrix = []
 
 chord_annotation_long_dic = []
@@ -49,13 +50,30 @@ for i, val in enumerate(chord_annotation_dic):
     second_chord = chord_annotation_dic[i]['chord'][1:].tolist()
     tp_matrix.append(transition_prob_matrix(first_chord, second_chord))
 
-print('ok')
+
+test = pd.DataFrame(0, index=np.arange(len(all_chords)), columns=all_chords)
+test_count = pd.DataFrame(0, index=np.arange(len(all_chords)), columns=all_chords)
+for k in np.arange(0, len(tp_matrix)):
+    temp_tp = tp_matrix[k]
+    for i in np.arange(0, len(temp_tp.columns)):
+        for j in np.arange(0, len(temp_tp.index)):
+            test.iloc[column_index(all_chords, temp_tp)[j], column_index(all_chords, temp_tp)[i]] = \
+                test.iloc[column_index(all_chords, temp_tp)[j], column_index(all_chords, temp_tp)[i]] + \
+                temp_tp.iloc[j,i]
+            if temp_tp.iloc[j, i] > 0:
+                test_count.iloc[column_index(all_chords, temp_tp)[j], column_index(all_chords, temp_tp)[i]] = \
+                    test_count.iloc[column_index(all_chords, temp_tp)[j], column_index(all_chords, temp_tp)[i]] + 1
+
+test = pd.DataFrame(np.matrix(test.iloc[:, :]), index=all_chords, columns=all_chords)
+test_count = pd.DataFrame(np.matrix(test_count.iloc[:,:]), index=all_chords, columns=all_chords)
+res_tp = test.div(test_count)
 
 
 # ------------------------------------------------------------------------------------------
 # INITIAL STATE MATRIX
 # ------------------------------------------------------------------------------------------
-print('INITIAL STATE MATRIX')
+
+print('initial state matrix')
 in_matrix = []
 for i in range(29):
     in_matrix.append(1/29)
@@ -75,6 +93,7 @@ def build_gaussian_hmm(initial_state_prob, transition_matrix, mu_array, states_c
     h_markov_model.covars_ = states_cov_matrices
     return h_markov_model
 
-h_markov_model = build_gaussian_hmm(in_matrix, tp_matrix, mu_dic, cov_dic)
 
-print('jhg')
+h_markov_model = build_gaussian_hmm(in_matrix, res_tp, mu_dic, cov_dic)
+
+print('fottiti')
