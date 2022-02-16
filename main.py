@@ -1,6 +1,5 @@
 from extractor import *
-import os  # provides functions for interacting with the operating system
-import matplotlib.pyplot as plt
+import os
 import numpy as np
 import pandas as pd
 from hmmlearn import hmm
@@ -14,8 +13,10 @@ from utils import column_index
 print('variables')
 notes = np.array(["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"])
 all_chords = ['G', 'B_min', 'E_min', 'C', 'A_min', 'F', 'D', 'F#', 'C#', 'E', 'B', 'A', 'F#_min', 'C_min', 'F_min', 'Eb', 'G_min', 'Bb', 'Ab', 'D_min', 'C#_min', 'Db', 'Bb_min', 'Eb_min', 'Gb_min', 'Gb', 'G#_min', 'G#', 'D#_min']
-mu_dic = dict.fromkeys(all_chords)
-cov_dic = dict.fromkeys(all_chords)
+# mu_dic = dict.fromkeys(all_chords)
+# cov_dic = dict.fromkeys(all_chords)
+mu_matrix = []
+cov_matrix = []
 chromagrams_path = 'data/chromagrams'
 i = int(0)
 
@@ -29,8 +30,10 @@ for elem in sorted(os.listdir('data/chromagrams/')):
     temp_df = pd.read_csv(temp_path)
     temp_df = temp_df.iloc[:, 1:]
     mu_array, states_cov_matrices = get_mu_sigma_from_chroma(temp_df, notes)
-    mu_dic[all_chords[i]] = mu_array
-    cov_dic[all_chords[i]] = states_cov_matrices
+    mu_matrix.append(mu_array)
+    cov_matrix.append(states_cov_matrices)
+    # mu_dic[all_chords[i]] = mu_array
+    # cov_dic[all_chords[i]] = states_cov_matrices
     i += 1
 
 
@@ -79,6 +82,10 @@ for i in range(29):
     in_matrix.append(1/29)
 
 
+# ------------------------------------------------------------------------------------------
+# TRAIN GAUSSIAN HMM
+# ------------------------------------------------------------------------------------------
+
 def build_gaussian_hmm(initial_state_prob, transition_matrix, mu_array, states_cov_matrices):
     # continuous emission model
     h_markov_model = hmm.GaussianHMM(n_components=transition_matrix.shape[0], covariance_type="full")
@@ -94,6 +101,9 @@ def build_gaussian_hmm(initial_state_prob, transition_matrix, mu_array, states_c
     return h_markov_model
 
 
-h_markov_model = build_gaussian_hmm(in_matrix, res_tp, mu_dic, cov_dic)
+h_markov_model = build_gaussian_hmm(in_matrix, res_tp, mu_matrix, cov_matrix)
 
 print('fottiti')
+
+for i in np.arange(0, 1):
+    print(i)
