@@ -5,7 +5,7 @@ import pandas as pd
 from hmmlearn import hmm
 from extractor_functions import readlab, readcsv_chroma, chord_chroma_raws, get_mu_sigma_from_chroma, \
     transition_prob_matrix
-from utils import column_index
+from utils import column_index, chords_mapper
 
 # ------------------------------------------------------------------------------------------
 # VARIABLES
@@ -108,8 +108,11 @@ h_markov_model = build_gaussian_hmm(in_matrix, res_tp, mu_matrix, cov_matrix)
 
 chroma_dic = readcsv_chroma(path_CQT_csv, notes)
 
-print('fottiti')
-
 chord_ix_predictions = h_markov_model.predict(chroma_dic[6])
 print('HMM output predictions:')
 print(chord_ix_predictions[:50])
+
+
+chord_pred = []
+for i in chord_ix_predictions:
+    chord_pred.append(chords_mapper(i, all_chords))
