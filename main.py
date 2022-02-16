@@ -106,8 +106,10 @@ def build_gaussian_hmm(initial_state_prob, transition_matrix, mu_array, states_c
 
 h_markov_model = build_gaussian_hmm(in_matrix, res_tp, mu_matrix, cov_matrix)
 
+chroma_dic = readcsv_chroma(path_CQT_csv, notes)
+
 print('fottiti')
 
-chord_ix_predictions = h_markov_model.predict(chroma_dic_new[6])
+chord_ix_predictions = h_markov_model.predict(chroma_dic[6])
 print('HMM output predictions:')
 print(chord_ix_predictions[:50])
