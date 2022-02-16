@@ -7,3 +7,7 @@ def column_index(target_list, query_cols):
         temp = target_list.index(str(query_cols.columns.to_list()[i]))
         column_idx.append(temp)
     return column_idx
+
+
+def chords_mapper(n, mapping):
+    return mapping[n]
