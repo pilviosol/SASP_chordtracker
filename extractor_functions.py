@@ -2,8 +2,7 @@ import os
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import \
-    re
+import re
 
 plt.style.use('seaborn')
 
@@ -35,7 +34,7 @@ def __simplify_chords(chords_df):  # silence
 # READ .LAB FILES
 # ------------------------------------------------------------------------------------------
 def readlab(path):
-    '''
+    """
 
     Args:
         path: path where the .lab files are
@@ -44,16 +43,15 @@ def readlab(path):
         dictionary: a dictionary with all songs decomposed in start, end, chord
         song_list: a list containing all song's name in the dataset
 
-    '''
+    """
     dictionary = []
     list_name = []
 
     for elem in sorted(os.listdir(path)):
         song_path = f'{path}/{elem}'
         list_name.append(elem)
-        chord_annotation = pd.read_csv(song_path, sep=' ', header=None)  # no header in the files and separated
-                                                                         # by an empty space
-                                                                         # set up the columns of the file
+        # no header in the files and separated by an empty space set up the columns of the file
+        chord_annotation = pd.read_csv(song_path, sep=' ', header=None)
         chord_annotation.columns = ['start', 'end', 'chord']
         chord_annotation['chord'] = __simplify_chords(chord_annotation)
         chord_annotation.loc[chord_annotation['chord'] == 'N', 'chord'] = chord_annotation['chord'].mode()[0]
@@ -68,7 +66,7 @@ def readlab(path):
 # ------------------------------------------------------------------------------------------
 
 def readcsv_chroma(path, notes):
-    '''
+    """
 
     Args:
         notes: the notes name array
@@ -78,7 +76,7 @@ def readcsv_chroma(path, notes):
         dictionary: a dictionary with all songs, each one decomposed in equally spaced windows with all energies per
         note for each window
 
-    '''
+    """
 
     dictionary = []
 
@@ -96,7 +94,7 @@ def readcsv_chroma(path, notes):
 # INSERT CHORD TO THE LAST CHROMA ROW
 # ------------------------------------------------------------------------------------------
 def chord_chroma_raws(chroma, chord_annotation, win_size_t):
-    '''
+    """
 
     Args:
         win_size_t: window size of the chroma
@@ -108,7 +106,7 @@ def chord_chroma_raws(chroma, chord_annotation, win_size_t):
         chroma: a dictionary with all songs, each one decomposed in equally spaced windows with all energies per
         note for each window with a new column with the chord assigned from the dataset
 
-    '''
+    """
 
     chroma['chord'] = '0'
     raw = 0
@@ -125,116 +123,3 @@ def chord_chroma_raws(chroma, chord_annotation, win_size_t):
             # print('else')
 
     return chroma
-
-
-# ------------------------------------------------------------------------------------------
-# CALCULATE MU AND SIGMA
-# ------------------------------------------------------------------------------------------
-
-def __get_mu_array(note_feature_vector, notes):
-    return note_feature_vector[notes].mean()
-
-
-def get_mu_sigma_from_chroma(chromagram, notes):
-    mu = __get_mu_array(chromagram, notes)
-
-    states_cov = chromagram.cov().values
-    states_cov = np.array(states_cov)
-
-    return [mu, states_cov]
-
-
-# ------------------------------------------------------------------------------------------
-# CALCULATE TRANSITION PROBABILITY MATRIX
-# ------------------------------------------------------------------------------------------
-
-def __calc_prob_chordpairs(chord_group): # probability of having one chord after the other based on .lab files
-    '''
-
-    Args:
-        chord_group: group of chords of a song
-
-    Returns:
-        chord_group_count: probability of having a chord after one other for all chords in a song
-
-    '''
-
-    chord_group_count = chord_group.groupby('second_chord').size().reset_index()
-    chord_group_count.columns = ['second_chord', 'count']
-    total = chord_group_count['count'].sum()
-    chord_group_count['transition_prob'] = chord_group_count['count']/total
-
-    return chord_group_count
-
-
-def transition_prob_matrix(firstchord, secondchord):
-    '''
-
-    Args:
-        firstchord:
-        secondchord:
-
-    Returns:
-        prob_matrix: matrix with probabilities of passing from a chord to another
-
-    '''
-
-    sequence_chords = pd.DataFrame({'first_chord': firstchord, 'second_chord': secondchord})
-    prob_matrix = sequence_chords.groupby('first_chord').apply(__calc_prob_chordpairs).reset_index()
-    prob_matrix = prob_matrix.drop('level_1', axis=1)
-    prob_matrix = prob_matrix.pivot(index='first_chord', columns='second_chord', values='transition_prob')
-    prob_matrix = prob_matrix.fillna(0)
-
-    return prob_matrix
-
-
-# ------------------------------------------------------------------------------------------
-# CREATE THE DICTIONARY WITH ALL THE CHROMA REGROUPED BY CHORDS
-# ------------------------------------------------------------------------------------------
-def calculate_chromagrams_csvs_by_chord(path):
-    '''
-
-    Args:
-        chroma_dic_path: path where saved all song's csvs of chromagrams with column 'chord' appended
-
-    Returns: all csvs of chromagrams divided by chord in the folder "data/chromagrams"
-
-    '''
-
-    # import the new chroma dictionary csv list
-    chroma_dic_path = path  # 'data/chroma_dic_new_csvs'
-    chroma_dic_new_list = []
-    for elem in sorted(os.listdir(chroma_dic_path)):
-        temp_path = f'{chroma_dic_path}/{elem}'
-        temp_df = pd.read_csv(temp_path)
-        chroma_dic_new_list.append(temp_df)
-
-    all_chords = []
-    for songs in chroma_dic_new_list:
-        for elements in sorted(songs['chord']):
-            if elements not in all_chords:
-                all_chords.append(elements)
-    all_chords = sorted(all_chords)
-    print(all_chords)
-
-    chords_dictionary = {}
-    for chords in all_chords:
-        name = str(chords)
-        chords_dictionary[name] = []
-
-    for chord in all_chords:
-        print('processing chord: ', chord)
-        for song in chroma_dic_new_list:
-            for row, index in song.iterrows():
-                if index['chord'] == chord:
-                    chords_dictionary[chord].append(index)
-
-    for chord in all_chords:
-        list_frames = []
-        print('processing chord2: ', chord)
-        for i in np.arange(0, len(chords_dictionary[chord])):
-            list_frames.append(chords_dictionary[chord][i])
-        pandas_frame = pd.DataFrame(list_frames,
-                                    columns=["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"])
-        #pandas_frame.to_csv('data/chromagrams/chords_dictionary_chroma_' + str(chord))
-        pandas_frame.to_csv('data/librosa_chromagrams/chords_dictionary_chroma_' + str(chord))
