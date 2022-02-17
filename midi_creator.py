@@ -34,6 +34,8 @@ def midi_chord_creator(all_chords_mid):
     all_chords_mid['G#_min'] = minor + (bias - 1)
     all_chords_mid['G#'] = maj + (bias - 1)
     all_chords_mid['D#_min'] = minor + (bias - 6)
+    all_chords_mid['C'] = maj + (bias + 3)
+    return all_chords_mid
 
 
 def midi_predictor(mid_pred, mid_pred_trck, chord_pred, all_chords_mid, note_dur):
@@ -42,6 +44,7 @@ def midi_predictor(mid_pred, mid_pred_trck, chord_pred, all_chords_mid, note_dur
 
     i = 0
     for elem in chord_pred:
+        print(elem)
         mid_pred_trck.append(mido.Message('note_on', note=all_chords_mid[elem][0], velocity=64, time=i*note_dur))
         mid_pred_trck.append(mido.Message('note_off', note=all_chords_mid[elem][0], velocity=64, time=(i+1)*note_dur))
         mid_pred_trck.append(mido.Message('note_on', note=all_chords_mid[elem][1], velocity=64, time=i*note_dur))

@@ -112,10 +112,10 @@ h_markov_model = build_gaussian_hmm(in_matrix, res_tp, mu_matrix, cov_matrix)
 # ------------------------------------------------------------------------------------------
 # PREDICTION FROM CHROMA
 # ------------------------------------------------------------------------------------------
-'''
-chroma_dic = readcsv_chroma(path_CQT_csv, notes)
 
-chord_ix_predictions = h_markov_model.predict(chroma_dic[6])
+chroma_dic = readcsv_chroma(librosa_path_CQT_csv, notes)
+
+chord_ix_predictions = h_markov_model.predict(chroma_dic[36])
 print('HMM output predictions:')
 print(chord_ix_predictions[:50])
 
@@ -123,19 +123,21 @@ chord_pred = []
 for i in chord_ix_predictions:
     chord_pred.append(chords_mapper(i, all_chords))
 
+print(chord_pred)
+
 
 # ------------------------------------------------------------------------------------------
 # PREDICTION TO MIDI
 # ------------------------------------------------------------------------------------------
 
 mid_pred = mido.MidiFile()
-mid_pred_trck = mido.MidiTracks()
+mid_pred_trck = mido.MidiTrack()
 
 note_dur = 192
 
 all_chords_mid = dict.fromkeys(all_chords)
 all_chords_mid = midi_chord_creator(all_chords_mid)
+# save the midi file
+midi_predictor(mid_pred, mid_pred_trck, chord_pred, all_chords_mid, note_dur)
 
-midi_predictor(mid_pred, mid_pred_trck, chord_pred, all_chords_mid, note_dur) #save the midi file
-
-'''
+print('final')
