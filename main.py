@@ -145,6 +145,7 @@ mid_pred = mido.MidiFile()
 mid_pred_trck = mido.MidiTracks()
 
 note_dur = 192
+
 all_chords_mid = dict.fromkeys(all_chords)
 all_chords_mid = midi_chord_creator(all_chords_mid)
 
