@@ -211,9 +211,10 @@ def calculate_chromagrams_csvs_by_chord(path):
 
     all_chords = []
     for songs in chroma_dic_new_list:
-        for elements in songs['chord']:
+        for elements in sorted(songs['chord']):
             if elements not in all_chords:
                 all_chords.append(elements)
+    all_chords = sorted(all_chords)
     print(all_chords)
 
     chords_dictionary = {}
@@ -235,4 +236,5 @@ def calculate_chromagrams_csvs_by_chord(path):
             list_frames.append(chords_dictionary[chord][i])
         pandas_frame = pd.DataFrame(list_frames,
                                     columns=["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"])
-        pandas_frame.to_csv('data/chromagrams/chords_dictionary_chroma_' + str(chord))
+        #pandas_frame.to_csv('data/chromagrams/chords_dictionary_chroma_' + str(chord))
+        pandas_frame.to_csv('data/librosa_chromagrams/chords_dictionary_chroma_' + str(chord))

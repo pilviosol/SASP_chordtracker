@@ -7,7 +7,7 @@ import librosa.display
 import numpy as np
 import matplotlib.pyplot as plt
 
-y, sr = librosa.load('/Users/PilvioSol/Desktop/00_A_Day_In_The_Life.wav', mono=True)
+y, sr = librosa.load('/Users/PilvioSol/Desktop/Am_C_G_Em.wav', mono=True)
 
 
 def extract_features(file_name):
@@ -29,8 +29,9 @@ def extract_features(file_name):
 
 chroma = librosa.feature.chroma_stft(y=y, sr=sr, n_fft=2048, hop_length=1024, window='hann', win_length=2048)
 stft = librosa.stft(y, hop_length=1024, window='hann')
-X, chroma_clara = extract_features('/Users/PilvioSol/Desktop/00_A_Day_In_The_Life.wav')
+X, chroma_clara = extract_features('/Users/PilvioSol/Desktop/Am_C_G_Em.wav')
 
+chroma_from_X = librosa.feature.chroma_stft(S=X, sr=sr, n_fft=2048, hop_length=1024, window='hann', win_length=2048)
 
 
 fig, ax = plt.subplots(nrows=2, sharex=True)

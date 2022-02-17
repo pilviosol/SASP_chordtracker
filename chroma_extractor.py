@@ -24,6 +24,7 @@ path_files = "/Users/PilvioSol/Desktop/progetto/Beatles_new_new/"
 # path_files = "D:/Uni/First year/Second Semester/Sound Analysis/Project Chord detection/Beatles_wav/"
 # path_chromagrams = "E:/Uni/First year/Second Semester/Sound Analysis/Project Chord detection/Chromagrams/"
 path_csv = "data/Beatles_CQT_csv/"
+librosa_path_csv = "data/Librosa_Beatles_CQT_csv/"
 
 
 # ------------------------------------------------------------------------------------------
@@ -170,7 +171,26 @@ def extract_features(file_name):
 
     return cqt
 
+def Librosa_extract_features(file_name):
+    try:
+        audio, sample_rate = librosa.load(file_name, mono=True)
 
+        #cqt = librosa.feature.chroma_cqt(y=Hmn, sr=sample_rate)
+        H = 1024
+        N = 2048
+        Fs = _SAMPLING_RATE
+        w = np.hanning(N)
+        X = stft_basic(audio, w, H)
+        Hmn, Prs = librosa.decompose.hpss(X)
+        # eps = np.finfo(float).eps
+        librosa_cqt = librosa.feature.chroma_stft(S=Hmn, sr=Fs, n_fft=2048, hop_length=1024, window='hann', win_length=2048)
+
+
+    except Exception as e:
+        print("Error encountered while parsing file: ", file_name)
+        return None
+
+    return librosa_cqt
 
 
 
@@ -179,14 +199,14 @@ def extract_features(file_name):
 # ------------------------------------------------------------------------------------------
 # CQT.CSV EXTRACTION PER TUTTI I FILE DEL DATASET
 # ------------------------------------------------------------------------------------------
-'''
+
 files_in_basepath = pathlib.Path(path_files)
 songs_path = files_in_basepath.iterdir()
 
 for song in sorted(songs_path):
     if (str(song).endswith('.wav') and song.is_file()):
 
-        print(song)
+        '''print(song)
         features = extract_features(song)
         print(features)
         name_csv = song.name[0:-4] + '_CQT.csv'
@@ -200,10 +220,25 @@ for song in sorted(songs_path):
         ax.set_title(name_cqt)
         # fig.colorbar(img, ax=ax, format="%+2.0f dB")
         
-        fig.savefig(path_csv + name_cqt)
+        fig.savefig(path_csv + name_cqt)'''
+
+        print(song)
+        features = Librosa_extract_features(song)
+        print(features)
+        name_csv = song.name[0:-4] + '_CQT.csv'
+        np.savetxt(librosa_path_csv + name_csv, features, delimiter=",")
+
+        name_cqt = song.name[0:-4] + '_CQT.png'
+        fig, ax = plt.subplots()
+        img = librosa.display.specshow(librosa.amplitude_to_db(features, ref=np.max),
+                                       sr=_SAMPLING_RATE, ax=ax)
+        ax.set_title(name_cqt)
+        # fig.colorbar(img, ax=ax, format="%+2.0f dB")
+
+        fig.savefig(librosa_path_csv + name_cqt)
 
 
     else:
         print('thats not a mp3 file')
 
-'''
+

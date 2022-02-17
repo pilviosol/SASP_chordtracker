@@ -14,12 +14,13 @@ from midi_creator import midi_chord_creator, midi_predictor
 # ------------------------------------------------------------------------------------------
 print('variables')
 notes = np.array(["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"])
-all_chords = ['G', 'B_min', 'E_min', 'C', 'A_min', 'F', 'D', 'F#', 'C#', 'E', 'B', 'A', 'F#_min', 'C_min', 'F_min', 'Eb', 'G_min', 'Bb', 'Ab', 'D_min', 'C#_min', 'Db', 'Bb_min', 'Eb_min', 'Gb_min', 'Gb', 'G#_min', 'G#', 'D#_min']
-# mu_dic = dict.fromkeys(all_chords)
-# cov_dic = dict.fromkeys(all_chords)
+all_chords = ['A', 'A_min', 'Ab', 'B', 'B_min', 'Bb', 'Bb_min', 'C', 'C#', 'C#_min', 'C_min', 'D', 'D#_min', 'D_min', 'Db', 'E', 'E_min', 'Eb', 'Eb_min', 'F', 'F#', 'F#_min', 'F_min', 'G', 'G#', 'G#_min', 'G_min', 'Gb', 'Gb_min']
+mu_dic = dict.fromkeys(all_chords)
+cov_dic = dict.fromkeys(all_chords)
 mu_matrix = []
 cov_matrix = []
-chromagrams_path = 'data/chromagrams'
+#chromagrams_path = 'data/chromagrams'
+librosa_chromagrams_path = 'data/librosa_chromagrams'
 i = int(0)
 
 
@@ -29,7 +30,8 @@ i = int(0)
 print('calculate mu and sigma')
 for elem in sorted(os.listdir('data/chromagrams/')):
     mu_values = []
-    temp_path = f'{chromagrams_path}/{elem}'
+    #temp_path = f'{chromagrams_path}/{elem}'
+    temp_path = f'{librosa_chromagrams_path}/{elem}'
     temp_df = pd.read_csv(temp_path)
     temp_df = temp_df.iloc[:, 1:]
     mu_array, states_cov_matrices = get_mu_sigma_from_chroma(temp_df, notes)
@@ -37,8 +39,8 @@ for elem in sorted(os.listdir('data/chromagrams/')):
         mu_values.append(mu_array[i])
     mu_matrix.append(mu_values)
     cov_matrix.append(states_cov_matrices)
-    # mu_dic[all_chords[i]] = mu_array
-    # cov_dic[all_chords[i]] = states_cov_matrices
+    mu_dic[all_chords[i]] = mu_array
+    cov_dic[all_chords[i]] = states_cov_matrices
     i += 1
 
 # ------------------------------------------------------------------------------------------
@@ -52,7 +54,7 @@ for i in range(len(mu_matrix)):
     plt.title(all_chords[i])
     y_pos = np.arange(len(notes))
     plt.xticks(y_pos, notes)
-    # plt.savefig('/Users/PilvioSol/Desktop/mu_plots/' + all_chords[i] + '.png')
+    plt.savefig('/Users/PilvioSol/Desktop/librosa_mu_plots2/' + all_chords[i] + '.png')
     plt.show()
 
 # ------------------------------------------------------------------------------------------
@@ -125,7 +127,7 @@ h_markov_model = build_gaussian_hmm(in_matrix, res_tp, mu_matrix, cov_matrix)
 # ------------------------------------------------------------------------------------------
 # PREDICTION FROM CHROMA
 # ------------------------------------------------------------------------------------------
-
+'''
 chroma_dic = readcsv_chroma(path_CQT_csv, notes)
 
 chord_ix_predictions = h_markov_model.predict(chroma_dic[6])
@@ -150,3 +152,5 @@ all_chords_mid = dict.fromkeys(all_chords)
 all_chords_mid = midi_chord_creator(all_chords_mid)
 
 midi_predictor(mid_pred, mid_pred_trck, chord_pred, all_chords_mid, note_dur) #save the midi file
+
+'''
