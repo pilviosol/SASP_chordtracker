@@ -133,7 +133,7 @@ print(chord_pred)
 mid_pred = mido.MidiFile()
 mid_pred_trck = mido.MidiTrack()
 
-note_dur = 192
+note_dur = win_size_t
 
 all_chords_mid = dict.fromkeys(all_chords)
 all_chords_mid = midi_chord_creator(all_chords_mid)

@@ -40,17 +40,16 @@ def midi_chord_creator(all_chords_mid):
 
 def midi_predictor(mid_pred, mid_pred_trck, chord_pred, all_chords_mid, note_dur):
 
+    # I need three tracks for the three voices of the triad
     mid_pred.tracks.append(mid_pred_trck)
 
-    i = 0
     for elem in chord_pred:
         print(elem)
-        mid_pred_trck.append(mido.Message('note_on', note=all_chords_mid[elem][0], velocity=64, time=i*note_dur))
-        mid_pred_trck.append(mido.Message('note_off', note=all_chords_mid[elem][0], velocity=64, time=(i+1)*note_dur))
-        mid_pred_trck.append(mido.Message('note_on', note=all_chords_mid[elem][1], velocity=64, time=i*note_dur))
-        mid_pred_trck.append(mido.Message('note_off', note=all_chords_mid[elem][1], velocity=64, time=(i+1)*note_dur))
-        mid_pred_trck.append(mido.Message('note_on', note=all_chords_mid[elem][2], velocity=64, time=i*note_dur))
-        mid_pred_trck.append(mido.Message('note_off', note=all_chords_mid[elem][2], velocity=64, time=(i+1)*note_dur))
-        i += 1
+        mid_pred_trck.append(mido.Message('note_on', note=all_chords_mid[elem][0], velocity=64, time=0))
+        mid_pred_trck.append(mido.Message('note_on', note=all_chords_mid[elem][1], velocity=64, time=0))
+        mid_pred_trck.append(mido.Message('note_on', note=all_chords_mid[elem][2], velocity=64, time=0))
+        mid_pred_trck.append(mido.Message('note_off', note=all_chords_mid[elem][0], velocity=64, time=note_dur))
+        mid_pred_trck.append(mido.Message('note_off', note=all_chords_mid[elem][1], velocity=64, time=0))
+        mid_pred_trck.append(mido.Message('note_off', note=all_chords_mid[elem][2], velocity=64, time=0))
 
     mid_pred.save('data/prediction.mid')
