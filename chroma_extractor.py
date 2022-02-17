@@ -180,10 +180,12 @@ def Librosa_extract_features(file_name):
         N = 2048
         Fs = _SAMPLING_RATE
         w = np.hanning(N)
-        X = stft_basic(audio, w, H)
+        #X = stft_basic(audio, w, H)
+        X = librosa.stft(audio, window='hann', hop_length=1024)
         Hmn, Prs = librosa.decompose.hpss(X)
+        y = librosa.istft(Hmn, window='hann', hop_length=1024)
         # eps = np.finfo(float).eps
-        librosa_cqt = librosa.feature.chroma_stft(S=Hmn, sr=Fs, n_fft=2048, hop_length=1024, window='hann', win_length=2048)
+        librosa_cqt = librosa.feature.chroma_stft(y, sr=Fs, n_fft=2048, hop_length=1024, window='hann', win_length=2048)
 
 
     except Exception as e:
@@ -199,14 +201,14 @@ def Librosa_extract_features(file_name):
 # ------------------------------------------------------------------------------------------
 # CQT.CSV EXTRACTION PER TUTTI I FILE DEL DATASET
 # ------------------------------------------------------------------------------------------
-
+'''
 files_in_basepath = pathlib.Path(path_files)
 songs_path = files_in_basepath.iterdir()
 
 for song in sorted(songs_path):
     if (str(song).endswith('.wav') and song.is_file()):
 
-        '''print(song)
+        print(song)
         features = extract_features(song)
         print(features)
         name_csv = song.name[0:-4] + '_CQT.csv'
@@ -220,7 +222,7 @@ for song in sorted(songs_path):
         ax.set_title(name_cqt)
         # fig.colorbar(img, ax=ax, format="%+2.0f dB")
         
-        fig.savefig(path_csv + name_cqt)'''
+        fig.savefig(path_csv + name_cqt) 
 
         print(song)
         features = Librosa_extract_features(song)
@@ -240,5 +242,4 @@ for song in sorted(songs_path):
 
     else:
         print('thats not a mp3 file')
-
-
+'''

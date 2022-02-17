@@ -7,7 +7,7 @@ import librosa.display
 import numpy as np
 import matplotlib.pyplot as plt
 
-y, sr = librosa.load('/Users/PilvioSol/Desktop/Am_C_G_Em.wav', mono=True)
+y, sr = librosa.load('/Users/PilvioSol/Desktop/Scala.wav', mono=True)
 
 
 def extract_features(file_name):
@@ -28,11 +28,11 @@ def extract_features(file_name):
 
 
 chroma = librosa.feature.chroma_stft(y=y, sr=sr, n_fft=2048, hop_length=1024, window='hann', win_length=2048)
-stft = librosa.stft(y, hop_length=1024, window='hann')
-X, chroma_clara = extract_features('/Users/PilvioSol/Desktop/Am_C_G_Em.wav')
+stft = np.abs(librosa.stft(y, hop_length=1024, window='hann'))
+X, chroma_clara = extract_features('/Users/PilvioSol/Desktop/Scala.wav')
 
-chroma_from_X = librosa.feature.chroma_stft(S=X, sr=sr, n_fft=2048, hop_length=1024, window='hann', win_length=2048)
-
+chroma_from_X = librosa.feature.chroma_stft(S=stft, sr=sr, n_fft=2048, hop_length=1024, window='hann', win_length=2048)
+abs_chroma_from_X = np.abs(chroma_from_X)
 
 fig, ax = plt.subplots(nrows=2, sharex=True)
 img = librosa.display.specshow(librosa.amplitude_to_db(chroma_clara, ref=np.max),

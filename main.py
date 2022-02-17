@@ -63,10 +63,6 @@ for i in range(len(mu_matrix)):
 print('transition calculated on chord change from .lab file')
 tp_matrix = []
 
-chord_annotation_long_dic = []
-for i, val in enumerate(chord_annotation_dic):
-    chord_annotation_long_dic.append(chord_annotation_dic[i])
-
 
 for i, val in enumerate(chord_annotation_dic):
     first_chord = chord_annotation_dic[i]['chord'].values[:-1].tolist()

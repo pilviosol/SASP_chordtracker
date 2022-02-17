@@ -7,7 +7,7 @@ song_path = '/Users/PilvioSol/Desktop/Am_C_G_Em.wav'
 # READ FILE AND PERFORM CHROMAGRAM EXTRACTION
 # ------------------------------------------------------------------------------------------
 print('READ FILE AND PERFORM CHROMAGRAM EXTRACTION.....')
-cqt_test = extract_features(song_path)
+cqt_test = Librosa_extract_features(song_path)
 cqt_test_transpose = cqt_test.transpose()
 cqt_df = pd.DataFrame(cqt_test_transpose)
 
