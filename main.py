@@ -39,6 +39,19 @@ for elem in sorted(os.listdir('data/chromagrams/')):
     # cov_dic[all_chords[i]] = states_cov_matrices
     i += 1
 
+# ------------------------------------------------------------------------------------------
+# PLOT MU FOR EVERY CHORD
+# ------------------------------------------------------------------------------------------
+
+
+for i in range(len(mu_matrix)):
+    f, axes = plt.subplots(1, 1)
+    axes.plot(mu_matrix[i])
+    plt.title(all_chords[i])
+    y_pos = np.arange(len(notes))
+    plt.xticks(y_pos, notes)
+    # plt.savefig('/Users/PilvioSol/Desktop/mu_plots/' + all_chords[i] + '.png')
+    plt.show()
 
 # ------------------------------------------------------------------------------------------
 # TRANSITION CALCULATED ON CHORD CHANGE FROM .LAB FILE
@@ -107,7 +120,7 @@ def build_gaussian_hmm(initial_state_prob, transition_matrix, mu_array, states_c
 h_markov_model = build_gaussian_hmm(in_matrix, res_tp, mu_matrix, cov_matrix)
 
 chroma_dic = readcsv_chroma(path_CQT_csv, notes)
-
+'''
 chord_ix_predictions = h_markov_model.predict(chroma_dic[6])
 print('HMM output predictions:')
 print(chord_ix_predictions[:50])
@@ -116,3 +129,4 @@ print(chord_ix_predictions[:50])
 chord_pred = []
 for i in chord_ix_predictions:
     chord_pred.append(chords_mapper(i, all_chords))
+'''

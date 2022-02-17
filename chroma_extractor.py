@@ -179,7 +179,7 @@ def extract_features(file_name):
 # ------------------------------------------------------------------------------------------
 # CQT.CSV EXTRACTION PER TUTTI I FILE DEL DATASET
 # ------------------------------------------------------------------------------------------
-
+'''
 files_in_basepath = pathlib.Path(path_files)
 songs_path = files_in_basepath.iterdir()
 
@@ -206,4 +206,4 @@ for song in sorted(songs_path):
     else:
         print('thats not a mp3 file')
 
-
+'''
