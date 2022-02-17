@@ -2,10 +2,12 @@ from extractor import *
 import os
 import numpy as np
 import pandas as pd
+import mido
 from hmmlearn import hmm
 from extractor_functions import readlab, readcsv_chroma, chord_chroma_raws, get_mu_sigma_from_chroma, \
     transition_prob_matrix
 from utils import column_index, chords_mapper
+from midi_creator import midi_chord_creator, midi_predictor
 
 # ------------------------------------------------------------------------------------------
 # VARIABLES
@@ -119,14 +121,31 @@ def build_gaussian_hmm(initial_state_prob, transition_matrix, mu_array, states_c
 
 h_markov_model = build_gaussian_hmm(in_matrix, res_tp, mu_matrix, cov_matrix)
 
+
+# ------------------------------------------------------------------------------------------
+# PREDICTION FROM CHROMA
+# ------------------------------------------------------------------------------------------
+
 chroma_dic = readcsv_chroma(path_CQT_csv, notes)
-'''
+
 chord_ix_predictions = h_markov_model.predict(chroma_dic[6])
 print('HMM output predictions:')
 print(chord_ix_predictions[:50])
 
-
 chord_pred = []
 for i in chord_ix_predictions:
     chord_pred.append(chords_mapper(i, all_chords))
-'''
+
+
+# ------------------------------------------------------------------------------------------
+# PREDICTION TO MIDI
+# ------------------------------------------------------------------------------------------
+
+mid_pred = mido.MidiFile()
+mid_pred_trck = mido.MidiTracks()
+
+note_dur = 192
+all_chords_mid = dict.fromkeys(all_chords)
+all_chords_mid = midi_chord_creator(all_chords_mid)
+
+midi_predictor(mid_pred, mid_pred_trck, chord_pred, all_chords_mid, note_dur) #save the midi file
