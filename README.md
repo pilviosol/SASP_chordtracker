@@ -54,9 +54,11 @@ The training pipeline has the following structure:
 - pydub
 - sklearn
 
-## RESULTS
-...
 
 ## FUTURE DEVELOPMENT
-...
+We've made a comparison with chromagrams extracted from Librosa and the performances are similar. The accuracy in prediction is not the highest but for multiple causes:
 
+- the dataset is composed by too few songs (42) and all from the Beatles discography so we have no generalization;
+- HPSS split harmonic and percussive components: this surely helps but the harmonic remaining part is still a mixture of guitar, bass, voice, organ and other noisy components. With a different separation algorithm such as Spleeter https://github.com/deezer/spleeter) we think that performance could improve;
+- machine learning/ deep learning technique could be used, having computational power and a bigger (and well annotated!) dataset;
+- the conditioning could be done exploiting music theory of harmony.
