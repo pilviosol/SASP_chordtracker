@@ -1,26 +1,15 @@
-import os
 import matplotlib.pyplot as plt
-import csv
 import numpy as np
-import pandas as pd
 import librosa, librosa.display
-import pathlib
 plt.style.use('seaborn')
 
-import \
-    re  # regular expression, is a special sequence of characters that helps you match or find other strings or sets of strings
-
-
 
 # ------------------------------------------------------------------------------------------
-# DEFINIZIONE PATH E DEFINIZIONE DIRECTORY PER CHROMAGRAMS
+# VARIABLES
 # ------------------------------------------------------------------------------------------
-
-
 _SAMPLING_RATE = 44100
-
 path_files = "/Users/PilvioSol/Desktop/progetto/Beatles_new_new/"
-# path_chromagrams = "/Users/PilvioSol/Desktop/progetto/codice/data/chromagrams/"
+# path_chromagrams = "data/chromagrams/"
 # path_files = "D:/Uni/First year/Second Semester/Sound Analysis/Project Chord detection/Beatles_wav/"
 # path_chromagrams = "E:/Uni/First year/Second Semester/Sound Analysis/Project Chord detection/Chromagrams/"
 path_csv = "data/Beatles_CQT_csv/"
@@ -28,10 +17,10 @@ librosa_path_csv = "data/Librosa_Beatles_CQT_csv/"
 
 
 # ------------------------------------------------------------------------------------------
-# FUNZIONI PER CALCOLARE LE CHROMAGRAM
+# CHROMAGRAM COMPUTATION FUNCTIONS
 # ------------------------------------------------------------------------------------------
 
-def stft_basic(x, w, H=1024):
+def stft_basic(x, w, H = 1024):
     """Compute a basic version of the discrete short-time Fourier transform (STFT)
 
     Args:
@@ -145,22 +134,18 @@ def compute_chromagram(Y_LF):
 
 
 # ------------------------------------------------------------------------------------------
-# FUNZIONE PER ESTRARRE LE FEATURES (CHROMAGRAM)
+# CHROMAGRAM EXTRACTION WITH HAND-MADE FUNCTIONS
 # ------------------------------------------------------------------------------------------
-
-
 def extract_features(file_name):
     try:
         audio, sample_rate = librosa.load(file_name, mono=True)
 
-        #cqt = librosa.feature.chroma_cqt(y=Hmn, sr=sample_rate)
         H = 1024
         N = 2048
         Fs = _SAMPLING_RATE
         w = np.hanning(N)
         X = stft_basic(audio, w, H)
         Hmn, Prs = librosa.decompose.hpss(X)
-        # eps = np.finfo(float).eps
         Y = np.abs(Hmn)
         Y_LF, F_coef_pitch = compute_Y_LF(Y, Fs, N)
         cqt = compute_chromagram(Y_LF)
@@ -171,21 +156,20 @@ def extract_features(file_name):
 
     return cqt
 
+
+# ------------------------------------------------------------------------------------------
+# CHROMAGRAM EXTRACTION WITH LIBROSA FUNCTIONS
+# ------------------------------------------------------------------------------------------
 def Librosa_extract_features(file_name):
     try:
         audio, sample_rate = librosa.load(file_name, mono=True)
-
-        #cqt = librosa.feature.chroma_cqt(y=Hmn, sr=sample_rate)
         H = 1024
         N = 2048
         Fs = _SAMPLING_RATE
-        w = np.hanning(N)
-        #X = stft_basic(audio, w, H)
-        X = librosa.stft(audio, window='hann', hop_length=1024)
+        X = librosa.stft(audio, window='hann', hop_length=H)
         Hmn, Prs = librosa.decompose.hpss(X)
-        y = librosa.istft(Hmn, window='hann', hop_length=1024)
-        # eps = np.finfo(float).eps
-        librosa_cqt = librosa.feature.chroma_stft(y, sr=Fs, n_fft=2048, hop_length=1024, window='hann', win_length=2048)
+        y = librosa.istft(Hmn, window='hann', hop_length=H)
+        librosa_cqt = librosa.feature.chroma_stft(y, sr=Fs, n_fft=2048, hop_length=H, window='hann', win_length=N)
 
 
     except Exception as e:
@@ -195,11 +179,9 @@ def Librosa_extract_features(file_name):
     return librosa_cqt
 
 
-
-
-
 # ------------------------------------------------------------------------------------------
-# CQT.CSV EXTRACTION PER TUTTI I FILE DEL DATASET
+# CQT.CSV EXTRACTION FOR ALL DATASET FILES
+# TO BE RUNNED ONLY ONCE, NOW COMMENTED
 # ------------------------------------------------------------------------------------------
 '''
 files_in_basepath = pathlib.Path(path_files)
@@ -207,14 +189,17 @@ songs_path = files_in_basepath.iterdir()
 
 for song in sorted(songs_path):
     if (str(song).endswith('.wav') and song.is_file()):
-
+        
+        
+        # HAND MADE CHROMAGRAM EXTRACTION
+        
+        
         print(song)
         features = extract_features(song)
-        print(features)
+        # print(features)
         name_csv = song.name[0:-4] + '_CQT.csv'
         np.savetxt(path_csv + name_csv, features, delimiter=",")
-
-
+        
         name_cqt = song.name[0:-4] + '_CQT.png'
         fig, ax = plt.subplots()
         img = librosa.display.specshow(librosa.amplitude_to_db(features, ref=np.max),
@@ -222,8 +207,13 @@ for song in sorted(songs_path):
         ax.set_title(name_cqt)
         # fig.colorbar(img, ax=ax, format="%+2.0f dB")
         
-        fig.savefig(path_csv + name_cqt) 
+        # fig.savefig(path_csv + name_cqt) 
+        plt.close()
 
+
+        # LIBROSA CHROMAGRAM EXTRACTION
+        
+        
         print(song)
         features = Librosa_extract_features(song)
         print(features)
@@ -237,8 +227,8 @@ for song in sorted(songs_path):
         ax.set_title(name_cqt)
         # fig.colorbar(img, ax=ax, format="%+2.0f dB")
 
-        fig.savefig(librosa_path_csv + name_cqt)
-
+        # fig.savefig(librosa_path_csv + name_cqt)
+        plt.close()
 
     else:
         print('thats not a mp3 file')
