@@ -47,6 +47,6 @@ all_chords_dic = dict.fromkeys(all_chords)
 all_chords_mid = midi_chord_creator(all_chords_dic)
 
 # Create and save the midi file
-midi_predictor(mid_pred, mid_pred_trck, chord_predictions, all_chords_mid, note_dur=1)
+midi_predictor(mid_pred, mid_pred_trck, chord_predictions, all_chords_mid, note_dur=46)
 
 print('debug')

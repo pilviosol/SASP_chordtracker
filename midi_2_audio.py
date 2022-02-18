@@ -1,34 +1,46 @@
 from midi2audio import FluidSynth
 from pysndfx import AudioEffectsChain
-
+import pathlib
 # ------------------------------------------------------------------------------------------
 # VARIABLES
 # ------------------------------------------------------------------------------------------
-path_soundfont = "/Users/PilvioSol/Downloads/70s_sci-fi/70's Sci-fi.sf2"
-
-
-# ------------------------------------------------------------------------------------------
-# MIDI 2 AUDIO CONVERSION
-# ------------------------------------------------------------------------------------------
-FluidSynth(path_soundfont).midi_to_audio('data/prediction.mid','data/prediction.mp3')
+path_soundfont = "soundfonts/"
+files_in_basepath = pathlib.Path(path_soundfont)
+sound_path = files_in_basepath.iterdir()
 
 
 # ------------------------------------------------------------------------------------------
 # EFFECT DEFINITION AND APPLICATION
 # ------------------------------------------------------------------------------------------
-# Effect definition
 fx = (
     AudioEffectsChain()
-    .highshelf()
+    # .highshelf()
+    .lowpass(frequency=1100, q=0.5)
     .reverb()
-    .phaser()
-    .delay()
-    .lowshelf()
+    # .phaser()
+    # .delay()
+    # .lowshelf()
 )
 
 
+# ------------------------------------------------------------------------------------------
+# MIDI 2 AUDIO CONVERSION
+# ------------------------------------------------------------------------------------------
+# FluidSynth(path_soundfont).midi_to_audio('data/prediction.mid','data/prediction.mp3')
+for soundfont in sound_path:
+    print(soundfont)
+    FluidSynth(soundfont).midi_to_audio('data/prediction.mid', 'data/wav_outputs/prediction_' + str(soundfont.name)+ '.wav')
+    fx('data/wav_outputs/prediction_' + str(soundfont.name) + '.wav', 'data/wav_outputs_effect/prediction_effect_' + str(soundfont.name)+ '.wav')
+# ------------------------------------------------------------------------------------------
+# EFFECT DEFINITION AND APPLICATION
+# ------------------------------------------------------------------------------------------
+
+
+
+'''
 infile = 'data/prediction.mp3'
 outfile = 'data/prediction_with_effect.mp3'
 
 # Effect application
 fx(infile, outfile)
+'''
