@@ -1,11 +1,16 @@
-from os import path
 from pydub import AudioSegment
 import pathlib
-# files
+
+
+# ------------------------------------------------------------------------------------------
+# VARIABLES
+# ------------------------------------------------------------------------------------------
 src = "/Users/PilvioSol/Desktop/Beatles_new/"
 dst = "/Users/PilvioSol/Desktop/Beatles_new_wav/"
 
-# convert wav to mp3
+# ------------------------------------------------------------------------------------------
+# CONVERT MP3 TO WAV
+# ------------------------------------------------------------------------------------------
 files_in_basepath = pathlib.Path(src)
 songs_path = files_in_basepath.iterdir()
 
