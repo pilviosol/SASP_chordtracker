@@ -1,29 +1,31 @@
 from main import *
 from chroma_extractor import *
 
+
+# ------------------------------------------------------------------------------------------
+# VARIABLES
+# ------------------------------------------------------------------------------------------
 song_path = '/Users/PilvioSol/Desktop/Am_C_G_Em.wav'
 
 
 # ------------------------------------------------------------------------------------------
 # READ FILE AND PERFORM CHROMAGRAM EXTRACTION
 # ------------------------------------------------------------------------------------------
-
 print('READ FILE AND PERFORM CHROMAGRAM EXTRACTION.....')
 cqt_test = Librosa_extract_features(song_path)
 cqt_test_transpose = cqt_test.transpose()
 cqt_df = pd.DataFrame(cqt_test_transpose)
 
 
-print('ollare')
-
-
 # ------------------------------------------------------------------------------------------
-# MAKE PREDICTIONS
+# MAKE PREDICTIONS AND PRINT THEM
 # ------------------------------------------------------------------------------------------
-
-chord_ix_predictions = h_markov_model.predict(cqt_df)
+hmm_state_predictions = h_markov_model.predict(cqt_df)
 print('HMM output predictions:')
-print(chord_ix_predictions[:50])
+print(hmm_state_predictions[:50])
 
-print('ollare')
+chord_predictions = []
+for i in hmm_state_predictions:
+    chord_predictions.append(chords_mapper(i, all_chords))
+print(chord_predictions)
 
