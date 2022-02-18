@@ -1,19 +1,35 @@
 import numpy as np
 import pandas as pd
 import os
-
 from hmmlearn import hmm
 
 
 # ------------------------------------------------------------------------------------------
 # CALCULATE MU AND SIGMA
 # ------------------------------------------------------------------------------------------
-
 def __get_mu_array(note_feature_vector, notes):
+    """
+
+    Args:
+        note_feature_vector: chromagram
+        notes: array with 12 notes
+
+    Returns: mean by column (for each note)
+
+    """
     return note_feature_vector[notes].mean()
 
 
 def get_mu_sigma_from_chroma(chromagram, notes):
+    """
+
+    Args:
+        chromagram: chromagram
+        notes: array with 12 notes
+
+    Returns: mu array and cov matrix array
+
+    """
     mu = __get_mu_array(chromagram, notes)
 
     states_cov = chromagram.cov().values
@@ -25,7 +41,6 @@ def get_mu_sigma_from_chroma(chromagram, notes):
 # ------------------------------------------------------------------------------------------
 # CALCULATE TRANSITION PROBABILITY MATRIX
 # ------------------------------------------------------------------------------------------
-
 def __calc_prob_chordpairs(chord_group):  # probability of having one chord after the other based on .lab files
     """
 
@@ -49,8 +64,8 @@ def transition_prob_matrix(firstchord, secondchord):
     """
 
     Args:
-        firstchord:
-        secondchord:
+        firstchord: one chord
+        secondchord: another chord, to be calculated the transition from firstchord
 
     Returns:
         prob_matrix: matrix with probabilities of passing from a chord to another
@@ -69,7 +84,6 @@ def transition_prob_matrix(firstchord, secondchord):
 # ------------------------------------------------------------------------------------------
 # CREATE THE DICTIONARY WITH ALL THE CHROMA REGROUPED BY CHORDS
 # ------------------------------------------------------------------------------------------
-
 def calculate_chromagrams_csvs_by_chord(path):
     """
 
@@ -120,10 +134,20 @@ def calculate_chromagrams_csvs_by_chord(path):
 
 
 # ------------------------------------------------------------------------------------------
-# GAUSSIAN HMM DEFINITION
+# GAUSSIAN HMM MODEL DEFINITION
 # ------------------------------------------------------------------------------------------
-
 def build_gaussian_hmm(initial_state_prob, transition_matrix, mu_array, states_cov_matrices):
+    """
+
+    Args:
+        initial_state_prob: initial state probability matrix
+        transition_matrix: transition probability matrix
+        mu_array: mean array by chroma for each song
+        states_cov_matrices: cov matrix for each song
+
+    Returns: hidden markov model object
+
+    """
     # continuous emission model
     h_markov_model = hmm.GaussianHMM(n_components=transition_matrix.shape[0], covariance_type="full")
     # initial state probability
