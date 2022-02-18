@@ -42,8 +42,7 @@ The training pipeline has the following structure:
 - compute the probability state matrix and the initial state matrix from .lab files;
 - compute the emission probabilities;
 - train hmm model;
-- make predictions;
-- evaluate performances.
+- make predictions.
 
 ## USED LIBRARIES
 
