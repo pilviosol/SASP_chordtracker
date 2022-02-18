@@ -10,7 +10,16 @@ plt.style.use('seaborn')
 # ------------------------------------------------------------------------------------------
 # SIMPLIFY CHORD NOTATION
 # ------------------------------------------------------------------------------------------
-def __simplify_chords(chords_df):  # silence
+def __simplify_chords(chords_df):
+    """
+
+    Args:
+        chords_df: list of chords
+
+    Returns:
+        chord_processed: same chords reduced only to maj and min
+
+    """
     chords_processed = chords_df['chord'].str.split(':maj')  # remove major x chords return array of array
     # containing all the chords
     chords_processed = [elem[0] for elem in chords_processed]  # further process step above to return 1 array
@@ -116,10 +125,9 @@ def chord_chroma_raws(chroma, chord_annotation, win_size_t):
         # print('chord_annotation[end][raw]: ', chord_annotation['end'][raw])
         if win_size_t*np.float(ii+1) < chord_annotation['end'][raw]:
             chroma.loc[ii, 'chord'] = chord_annotation['chord'][raw]
-            # print('if')
+
         else:
             chroma.loc[ii, 'chord'] = chord_annotation['chord'][raw]
             raw += 1
-            # print('else')
 
     return chroma
