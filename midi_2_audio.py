@@ -10,7 +10,7 @@ path_soundfont = "/Users/PilvioSol/Downloads/70s_sci-fi/70's Sci-fi.sf2"
 # ------------------------------------------------------------------------------------------
 # MIDI 2 AUDIO CONVERSION
 # ------------------------------------------------------------------------------------------
-FluidSynth(path_soundfont).midi_to_audio('data/test.mid','data/test.mp3')
+FluidSynth(path_soundfont).midi_to_audio('data/prediction.mid','data/prediction.mp3')
 
 
 # ------------------------------------------------------------------------------------------
@@ -27,8 +27,8 @@ fx = (
 )
 
 
-infile = 'data/test.mp3'
-outfile = 'data/test_effect.mp3'
+infile = 'data/prediction.mp3'
+outfile = 'data/prediction_with_effect.mp3'
 
 # Effect application
 fx(infile, outfile)

@@ -1,6 +1,10 @@
 from main import *
 from chroma_extractor import *
 
+"""
+    QUA DOBBIAMO FARE ANCORA DELLE PROVE CON LE NOSTRE CHROMAGRAM (E ANCHE QUELLE DI LIBROSA)
+"""
+
 
 # ------------------------------------------------------------------------------------------
 # VARIABLES
