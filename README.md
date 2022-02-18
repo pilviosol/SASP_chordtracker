@@ -47,12 +47,13 @@ The training pipeline has the following structure:
 ## USED LIBRARIES
 
 - librosa
-- scipy
 - hmmlearn
 - numpy/pandas
 - pydub
-- sklearn
-
+- mido
+- matplotlib
+- midi2audio
+- pysndfx
 
 ## FUTURE DEVELOPMENT
 We've made a comparison with chromagrams extracted from Librosa and the performances are similar. The accuracy in prediction is not the highest but for multiple causes:
