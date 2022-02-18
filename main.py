@@ -32,8 +32,8 @@ tp_matrix = []
 print('calculating mu and sigma.....')
 for elem in sorted(os.listdir('data/chromagrams/')):
     mu_values = []
-    # temp_path = f'{chromagrams_path}/{elem}'
-    temp_path = f'{librosa_chromagrams_path}/{elem}'
+    temp_path = f'{chromagrams_path}/{elem}'
+    # temp_path = f'{librosa_chromagrams_path}/{elem}'
     temp_df = pd.read_csv(temp_path)
     temp_df = temp_df.iloc[:, 1:]
     mu_array, states_cov_matrices = get_mu_sigma_from_chroma(temp_df, notes)
@@ -52,7 +52,7 @@ for i in range(len(mu_matrix)):
     plt.title(all_chords[i])
     y_pos = np.arange(len(notes))
     plt.xticks(y_pos, notes)
-    plt.savefig(plot_mu_path + all_chords[i] + '.png')
+    # plt.savefig(plot_mu_path + all_chords[i] + '.png')
     # plt.show()
     plt.close()
 
@@ -69,8 +69,10 @@ The transition probability matrix is sum_df/count_df with row normalization.
 """
 
 for i, val in enumerate(chord_annotation_dic):
-    first_chord = librosa_chroma_dic_with_chords[i]['chord'].values[:-1].tolist()
-    second_chord = librosa_chroma_dic_with_chords[i]['chord'][1:].tolist()
+    # first_chord = librosa_chroma_dic_with_chords[i]['chord'].values[:-1].tolist()
+    # second_chord = librosa_chroma_dic_with_chords[i]['chord'][1:].tolist()
+    first_chord = chroma_dic_with_chords[i]['chord'].values[:-1].tolist()
+    second_chord = chroma_dic_with_chords[i]['chord'][1:].tolist()
     tp_matrix.append(transition_prob_matrix(first_chord, second_chord))
 
 
@@ -119,6 +121,7 @@ h_markov_model = build_gaussian_hmm(initial_state_matrix, transition_probability
 # ------------------------------------------------------------------------------------------
 # PREDICTION FROM BEATLES PRE-EXISTING CHROMAGRAMS
 # ------------------------------------------------------------------------------------------
+'''
 chroma_dic = readcsv_chroma(librosa_path_CQT_csv, notes)
 
 hmm_state_predictions = h_markov_model.predict(chroma_dic[36])
@@ -130,19 +133,8 @@ for i in hmm_state_predictions:
     chord_predictions.append(chords_mapper(i, all_chords))
 
 print(chord_predictions)
+'''
 
 
-# ------------------------------------------------------------------------------------------
-# PREDICTION TO MIDI (SAVED AS data/prediction.mid)
-# ------------------------------------------------------------------------------------------
-mid_pred = mido.MidiFile()
-mid_pred_trck = mido.MidiTrack()
-note_dur = win_size_t
-
-all_chords_dic = dict.fromkeys(all_chords)
-all_chords_mid = midi_chord_creator(all_chords_dic)
-
-# Create and save the midi file
-midi_predictor(mid_pred, mid_pred_trck, chord_predictions, all_chords_mid, note_dur)
 
 print('End of main!')
