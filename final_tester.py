@@ -10,7 +10,7 @@ from chroma_extractor import *
 # VARIABLES
 # ------------------------------------------------------------------------------------------
 #song_path = '/Users/PilvioSol/Desktop/Am_C_G_Em.wav'
-song_path = '/Users/PilvioSol/Desktop/43_Twist_And_Shout.wav'
+song_path = 'data/Twist_And_Shout.wav'
 
 
 # ------------------------------------------------------------------------------------------
