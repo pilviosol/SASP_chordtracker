@@ -67,8 +67,8 @@ The transition probability matrix is sum_df/count_df with row normalization.
 """
 
 for i, val in enumerate(chord_annotation_dic):
-    first_chord = librosa_chroma_dic_new[i]['chord'].values[:-1].tolist()
-    second_chord = librosa_chroma_dic_new[i]['chord'][1:].tolist()
+    first_chord = librosa_chroma_dic_with_chords[i]['chord'].values[:-1].tolist()
+    second_chord = librosa_chroma_dic_with_chords[i]['chord'][1:].tolist()
     tp_matrix.append(transition_prob_matrix(first_chord, second_chord))
 
 
