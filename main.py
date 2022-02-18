@@ -6,6 +6,8 @@ import mido
 from function import get_mu_sigma_from_chroma, transition_prob_matrix, build_gaussian_hmm
 from utils import column_index, chords_mapper
 from midi_creator import midi_chord_creator, midi_predictor
+import matplotlib.pyplot as plt
+plt.style.use('seaborn')
 
 
 # ------------------------------------------------------------------------------------------
